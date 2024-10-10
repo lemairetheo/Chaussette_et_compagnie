@@ -1,8 +1,5 @@
 <script>
     import { Palette, Calendar, Ruler, FileText, Package, Mail, Upload, Scissors, Circle, Maximize2, Minimize2 } from 'lucide-svelte'
-    import Replicate from "replicate";
-
-    const replicate = new Replicate();
 
     const allSockColors = [
         { id: 1, path: '/chaussettes_color/Blanc.jpg', hex: '#FFFFFF', sizes: ['36-41', '39-45'] },
@@ -34,7 +31,7 @@
     ];
 
     let selectedColor = allSockColors[0];
-    let step = 3;
+    let step = 1;
     let formData = {
         dueDate: '',
         size: '',
@@ -64,7 +61,7 @@
     let isRoundImage = false;
     let backgroundColor = '';
 
-    $: displayedImage = cartoonImage || croppedImage || uploadedImage;
+    $: displayedImage = croppedImage || uploadedImage;
 
 
     function handleSubmit() {
@@ -96,7 +93,6 @@
         }
     }
 
-    let cartoonImage = '';
 
     async function cropImage() {
         if (!uploadedImage) return;
@@ -113,36 +109,19 @@
         formData.append('padding', '0%');
 
         try {
-            // 1. Envoyer l'image à l'API PhotoRoom pour la détourer
             const result = await fetch('https://image-api.photoroom.com/v2/edit', {
                 method: 'POST',
                 headers: {
                     'Accept': 'image/png, application/json',
-                    'x-api-key': 'sandbox_94d27f005dd8cfaddb64864961f6215f59ad1340', // Remplace par ta clé API PhotoRoom
+                    'x-api-key': 'sandbox_94d27f005dd8cfaddb64864961f6215f59ad1340',
                 },
                 body: formData
             });
 
             if (result.ok) {
-                // 2. Obtenir l'image détourée
                 const imageBlob = await result.blob();
-                const imageUrl = URL.createObjectURL(imageBlob);  // Convertir le blob en URL
-                croppedImage = imageUrl;  // Utilisé si besoin de montrer l'image détourée à l'utilisateur
+                croppedImage = URL.createObjectURL(imageBlob);
 
-                // 3. Envoyer l'image détourée à l'API de Replicate pour appliquer l'effet cartoon
-                const output = await replicate.run(
-                    "catacolabs/cartoonify:f109015d60170dfb20460f17da8cb863155823c85ece1115e1e9e4ec7ef51d3b",
-                    {
-                        input: {
-                            seed: 2862431,
-                            image: imageUrl,  // On utilise l'URL de l'image détourée ici
-                        },
-                    }
-                );
-
-                // 4. Afficher l'image cartoonisée à l'utilisateur
-                cartoonImage = output[0];  // URL renvoyée par Replicate (le premier élément du tableau)
-                console.log(cartoonImage);
             } else {
                 console.error('Erreur lors du détourage:', await result.text());
             }
