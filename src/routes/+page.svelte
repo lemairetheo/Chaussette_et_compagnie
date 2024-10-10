@@ -31,7 +31,7 @@
     ];
 
     let selectedColor = allSockColors[0];
-    let step = 1;
+    let step = 3;
     let formData = {
         dueDate: '',
         size: '',
@@ -248,7 +248,8 @@
                             <img
                                     src={displayedImage}
                                     alt="Image personnalisée"
-                                    class="absolute object-contain md:mt-0 md:ml-0 !ml-[-15px] !mt-[30px]"
+                                    class:reset={isFullScreen}
+                                    class="absolute object-contain md:mt-0 md:ml-0 ml-[-15px] mt-[30px]"
                                     class:rounded-full={isRoundImage}
                                     style="
                                     left: {imagePosition.x}%;
@@ -341,6 +342,10 @@
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    .reset{
+        margin: 0;
+    }
 
     :global(body) {
         font-family: 'Poppins', sans-serif;
