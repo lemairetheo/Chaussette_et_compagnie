@@ -248,7 +248,7 @@
                             <img
                                     src={displayedImage}
                                     alt="Image personnalisée"
-                                    class="absolute object-contain"
+                                    class="absolute object-contain md:mt-0 md:ml-0 !ml-[-15px] !mt-[30px]"
                                     class:rounded-full={isRoundImage}
                                     style="
                                     left: {imagePosition.x}%;
