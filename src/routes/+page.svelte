@@ -162,7 +162,8 @@
     const minDateString = minDate.toISOString().split('T')[0];
 </script>
 
-<main class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4">
+<main class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4 relative">
+    <img src="/logo.png" alt="logo" class="absolute top-5 right-5 w-64" />
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-8">
         <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Personnalisez vos chaussettes</h1>
 
