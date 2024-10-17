@@ -90,7 +90,7 @@
         if (isFullScreen) {
             imagePosition = { x: 33, y: 36 };
         } else {
-            imagePosition = { x: 38, y: 25 };
+            imagePosition = { x: 30, y: 35 };
         }
     }
 
