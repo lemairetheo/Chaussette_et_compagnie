@@ -31,7 +31,7 @@
     ];
 
     let selectedColor = allSockColors[0];
-    let step = 1;
+    let step = 3;
     let formData = {
         dueDate: '',
         size: '',
@@ -40,7 +40,7 @@
         email: ''
     };
 
-    $: availableColors = allSockColors.filter(color => color.sizes.includes(formData.size));
+    $: availableColors = allSockColors;
     $: {
         if (!availableColors.includes(selectedColor)) {
             selectedColor = availableColors[0] || allSockColors[0];
@@ -54,12 +54,13 @@
     let uploadedImage = null;
     let croppedImage = null;
     let isLoading = false;
-    let imagePosition = { x: 38, y: 25 };
+    let imagePosition = { x: 30, y: 35 };
     let imageSize = 15;
     let imageOpacity = 0.8;
     let imageBlendMode = 'multiply';
     let isRoundImage = false;
     let backgroundColor = '';
+    let techProd = null
 
     $: displayedImage = croppedImage || uploadedImage;
 
@@ -134,10 +135,7 @@
 
 
 
-    function updateImagePosition(dx, dy) {
-        imagePosition.x = Math.max(0, Math.min(100, imagePosition.x + dx));
-        imagePosition.y = Math.max(0, Math.min(100, imagePosition.y + dy));
-    }
+
 
     function updateImageSize(delta) {
         if (imageSize < 20 || delta < 0)
@@ -178,30 +176,46 @@
                 </div>
 
                 <div>
-                    <label for="size" class="block text-sm font-medium text-gray-700 mb-1">Taille</label>
-                    <div class="relative">
-                        <Ruler class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                        <select bind:value={formData.size} id="size" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Sélectionnez une taille</option>
-                            <option value="36-41">36-41</option>
-                            <option value="39-45">39-45</option>
-                        </select>
+                    <label for="size" class="block text-sm font-medium text-gray-700 mb-1">Technique de personnalisation</label>
+                    <div class="flex gap-4 flex-row justify-start items-center">
+                        <div class="relative w-[30%]">
+                            <div on:click={() => techProd = "Broderie"} class:clicked={techProd === "Broderie"} class="py-3 flex flex-col justify-center items-center hover:bg-blue-800 hover:border-0 hover:text-white hover:scale-110 transition-all border-2 rounded-2xl w-full">
+                                Broderie
+                            </div>
+                        </div>
+                        <div class="relative w-[30%]">
+                            <div on:click={() => techProd = "Sticking"} class:clicked={techProd === "Sticking"} class="py-3 flex flex-col justify-center items-center hover:bg-blue-800 hover:border-0 hover:text-white hover:scale-110 transition-all border-2 rounded-2xl w-full">
+                                Sticking
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div>
-                    <label for="productionReason" class="block text-sm font-medium text-gray-700 mb-1">Raison de production</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Taille et quantité</label>
+                    <div class="flex gap-4 flex-col sm:flex-row">
+                        <div class="flex-1">
+                            <label for="size-36-41" class="block text-sm font-medium text-gray-700 mb-1">36-41</label>
+                            <div class="relative">
+                                <Ruler class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <input bind:value={formData.quantity3641} type="number" id="size-36-41"  min="50" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité (min 50)" />
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <label for="size-39-45" class="block text-sm font-medium text-gray-700 mb-1">39-45</label>
+                            <div class="relative">
+                                <Ruler class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                                <input bind:value={formData.quantity3945} type="number" id="size-39-45"  min="50" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité (min 50)" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="productionReason" class="block text-sm font-medium text-gray-700 mb-1">Parlez nous de votre projet</label>
                     <div class="relative">
                         <FileText class="absolute left-3 top-3 text-gray-400" size={20} />
-                        <textarea bind:value={formData.productionReason} id="productionReason" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3"></textarea>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantité désirée (minimum 50 paires)</label>
-                    <div class="relative">
-                        <Package class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                        <input bind:value={formData.quantity} type="number" id="quantity" required min="50" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        <textarea bind:value={formData.productionReason} id="productionReason" placeholder="Mariage, Entreprise ou toute autres informations" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3"></textarea>
                     </div>
                 </div>
 
@@ -248,29 +262,28 @@
 
         {#if step === 3}
             <div class="flex flex-col md:flex-row gap-8">
-                <div class="flex-1 relative">
+                <div class="flex-1 h-fit relative">
                     <img src={selectedColor.path} alt="Chaussette" class="w-full h-auto object-contain rounded-lg shadow-lg" />
                     {#if displayedImage}
                         <div
                                 class="absolute top-0 left-0 w-full h-full overflow-hidden"
-                                style="pointer-events: none; transform: rotate(-10deg)"
+                                style="pointer-events: none;"
                         >
                             <img
                                     src={displayedImage}
                                     alt="Image personnalisée"
-                                    class:reset={isFullScreen}
-                                    class="absolute object-contain md:mt-0 md:ml-0 ml-[-15px] mt-[30px]"
+                                    class="absolute object-contain"
                                     class:rounded-full={isRoundImage}
                                     style="
-                                    left: {imagePosition.x}%;
-                                    top: {imagePosition.y}%;
-                                    width: {imageSize}%;
-                                    transform: translate(-50%, -50%);
-                                    opacity: {imageOpacity};
-                                    mix-blend-mode: {imageBlendMode};
-                                    filter: contrast(1.1) saturate(1.1);
-                                    background-color: {backgroundColor};
-                                "
+                        left: {imagePosition.x}%;
+                        top: {imagePosition.y}%;
+                        width: {imageSize}%;
+                        transform: translate(-50%, -50%) rotate(-10deg);
+                        opacity: {imageOpacity};
+                        mix-blend-mode: {imageBlendMode};
+                        filter: contrast(1.1) saturate(1.1);
+                        background-color: {backgroundColor};
+                    "
                             />
                         </div>
                     {/if}
@@ -359,5 +372,9 @@
 
     :global(body) {
         font-family: 'Poppins', sans-serif;
+    }
+
+    .clicked {
+        @apply bg-blue-800 text-white hover:scale-100;
     }
 </style>
