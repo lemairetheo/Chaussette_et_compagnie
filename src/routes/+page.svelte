@@ -75,7 +75,7 @@
     let imagePosition = { x: 30, y: 36 };
     let imageSize = 15;
     let imageOpacity = 1;
-    let imageBlendMode = 'multiply';
+    let imageBlendMode = 'normal';
     let isRoundImage = false;
     let backgroundColor = '';
     let techProd = null
@@ -150,23 +150,6 @@
         } finally {
             isLoading = false;
         }
-    }
-
-
-
-
-
-    function updateImageSize(delta) {
-        if (imageSize < 20 || delta < 0)
-            imageSize = Math.max(10, Math.min(100, imageSize + delta));
-    }
-
-    function updateImageOpacity(delta) {
-        imageOpacity = Math.max(0.1, Math.min(1, imageOpacity + delta));
-    }
-
-    function toggleBlendMode() {
-        imageBlendMode = imageBlendMode === 'multiply' ? 'screen' : 'multiply';
     }
 
     function toggleRoundImage() {
