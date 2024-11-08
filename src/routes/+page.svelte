@@ -76,7 +76,7 @@
         lettrage: [
             '/exemple/lettrage1.png',
             '/exemple/lettrage2.jpg',
-            '/exemple/broderie3.jpg'
+            '/exemple/lettrage3.png'
         ]
     };
 
@@ -243,8 +243,8 @@
                                         <h3 class="text-xl font-semibold mb-2">Lettrage</h3>
                                         <p class:clicked={techProd === "Lettrage"} class="text-gray-600 mb-4">Un mot, une date, une punchline... Parce que la concision a toujours raison.</p>
                                         <div class="grid grid-cols-3 gap-2">
-                                            {#each exampleImages.lettrage as image}
-                                                <img src={image} alt="Exemple broderie" class="rounded-lg w-full h-36 object-cover" />
+                                            {#each exampleImages.lettrage as image, i}
+                                                <img src={image} class:object-bottom={i == 2} alt="Exemple broderie" class="rounded-lg w-full h-36 object-cover" />
                                             {/each}
                                         </div>
                                     </div>
