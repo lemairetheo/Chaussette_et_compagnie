@@ -71,7 +71,7 @@
         embroidery: [
             '/exemple/broderie1.png',
             '/exemple/broderie2.png',
-            '/exemple/broderie3.jpg'
+            '/exemple/broderie3.png'
         ],
         lettrage: [
             '/exemple/lettrage1.png',
