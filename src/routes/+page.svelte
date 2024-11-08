@@ -1,5 +1,5 @@
 <script>
-    import { Palette, Calendar, Ruler, FileText, Package, Mail, Upload, Scissors, Circle, Maximize2, Minimize2, ArrowLeft } from 'lucide-svelte'
+    import { Palette, Calendar, Ruler, FileText, Package, Mail, Upload, Scissors, Circle, Maximize2, Minimize2, ArrowLeft, Type } from 'lucide-svelte'
 
     const allSockColors = [
         { id: 1, path: '/chaussettes_color/Blanc.jpg', hex: '#FFFFFF', name: 'Blanc', sizes: ['36-41', '39-45'] },
@@ -41,15 +41,41 @@
         email: ''
     };
 
+    let customText = '';
+    let customText2 = '';
+    let selectedFont = 'Pacifico';
+    let textColor = '#000000';
+    let textSize = 20;
+    let textRotation = -10;
+    let textPosition = { x: 30, y: 36 };
+
+    const fonts = [
+        { name: 'Pacifico', value: 'Pacifico' },
+        { name: 'Arial', value: 'Arial' },
+        { name: 'Times New Roman', value: 'Times New Roman' },
+        { name: 'Roboto', value: 'Roboto' },
+        { name: 'Playfair Display', value: 'Playfair Display' },
+        { name: 'Comic Sans MS', value: 'Comic Sans MS' },
+        { name: 'Impact', value: 'Impact' },
+    ];
+
+    $: isTextValid = customText.length <= 16;
+    $: textError = !isTextValid ? 'Le texte ne peut pas dépasser 16 caractères' : '';
+
     const exampleImages = {
         sticking: [
             '/exemple/sticking1.jpg',
-            '/exemple/sticking2.jpg',
-            '/exemple/sticking3.jpg'
+            '/exemple/sticking3.png',
+            '/exemple/sticking2.png'
         ],
         embroidery: [
-            '/exemple/broderie1.jpg',
-            '/exemple/broderie2.jpg',
+            '/exemple/broderie1.png',
+            '/exemple/broderie2.png',
+            '/exemple/broderie3.jpg'
+        ],
+        lettrage: [
+            '/exemple/lettrage1.png',
+            '/exemple/lettrage2.jpg',
             '/exemple/broderie3.jpg'
         ]
     };
@@ -81,6 +107,7 @@
     let techProd = null
     let min_paire= 50
 
+
     $: displayedImage = croppedImage || uploadedImage;
 
 
@@ -107,8 +134,10 @@
     function toggleFullScreen() {
         isFullScreen = !isFullScreen;
         if (isFullScreen) {
+            textSize = 40;
             imagePosition = { x: 30, y: 36 };
         } else {
+            textSize = 20;
             imagePosition = { x: 30, y: 35 };
         }
     }
@@ -165,6 +194,8 @@
 <main class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4 relative">
     <img src="/logo.png" alt="logo" class="absolute top-5 right-5 w-64" />
 
+    <img src="/logo.png" alt="logo" class="absolute top-5 left-5 w-64" />
+
     {#if step > 1}
         <button
                 on:click={goBack}
@@ -173,7 +204,7 @@
         </button>
     {/if}
 
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-8">
+    <div class="bg-white  rounded-2xl shadow-xl w-full max-w-4xl p-8">
         <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Personnalisez vos chaussettes</h1>
 
         {#if step === 1}
@@ -189,18 +220,31 @@
                 <div>
                     <label for="size" class="block text-sm font-medium text-gray-700 mb-1">Technique de personnalisation</label>
                     <div class="flex gap-4 flex-col space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
+                        <div
+                                on:click={() => {techProd = "Broderie", min_paire = 50}}
+                                class:clicked={techProd === "Broderie"}
+                                class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
+                            <div class:clicked={techProd === "Broderie"} class="bg-white p-4  rounded-2xl shadow-lg">
+                                <h3 class="text-xl font-semibold mb-2">Broderie</h3>
+                                <p class:clicked={techProd === "Broderie"} class="text-gray-600 mb-4">Idéal pour vos logos, blasons, emblèmes... Machine de haute précision.</p>
+                                <div class="grid grid-cols-3 gap-2">
+                                    {#each exampleImages.embroidery as image}
+                                        <img src={image} alt="Exemple broderie" class="rounded-lg w-full h-36 object-cover object-bottom" />
+                                    {/each}
+                                </div>
+                            </div>
+                        </div>
                             <div class="relative">
                                 <div
-                                        on:click={() => {techProd = "Broderie", min_paire = 50}}
-                                        class:clicked={techProd === "Broderie"}
+                                        on:click={() => {techProd = "Lettrage", min_paire = 50}}
+                                        class:clicked={techProd === "Lettrage"}
                                         class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
-                                    <div class:clicked={techProd === "Broderie"} class="bg-white p-4  rounded-2xl shadow-lg">
-                                        <h3 class="text-xl font-semibold mb-2">Broderie</h3>
-                                        <p class:clicked={techProd === "Broderie"} class="text-gray-600 mb-4">Pour logos, blasons et designs détaillés</p>
+                                    <div class:clicked={techProd === "Lettrage"} class="bg-white p-4  rounded-2xl shadow-lg">
+                                        <h3 class="text-xl font-semibold mb-2">Lettrage</h3>
+                                        <p class:clicked={techProd === "Lettrage"} class="text-gray-600 mb-4">Un mot, une date, une punchline... Parce que la concision a toujours raison.</p>
                                         <div class="grid grid-cols-3 gap-2">
-                                            {#each exampleImages.embroidery as image}
-                                                <img src={image} alt="Exemple broderie" class="rounded-lg w-full h-24 object-cover" />
+                                            {#each exampleImages.lettrage as image}
+                                                <img src={image} alt="Exemple broderie" class="rounded-lg w-full h-36 object-cover" />
                                             {/each}
                                         </div>
                                     </div>
@@ -212,16 +256,15 @@
                                         class:clicked={techProd === "Sticking"}
                                         class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
                                     <div class:clicked={techProd === "Sticking"} class="bg-white p-4 rounded-2xl shadow-lg">
-                                        <h3 class="text-xl font-semibold mb-2">Sticking</h3>
-                                        <p class:clicked={techProd === "Sticking"} class="text-gray-600 mb-4">Idéal pour photos et images complexes</p>
+                                        <h3 class="text-xl font-semibold mb-2">Sticking / Flocage</h3>
+                                        <p class:clicked={techProd === "Sticking"} class="text-gray-600 mb-4">Idéal pour vos photos, visuels, et images en tout genre.</p>
                                         <div class="grid grid-cols-3 gap-2">
                                             {#each exampleImages.sticking as image}
-                                                <img src={image} alt="Exemple sticking" class="rounded-lg w-full h-24 object-cover" />
+                                                <img src={image} alt="Exemple sticking" class="rounded-lg w-full h-36 object-cover" />
                                             {/each}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -304,31 +347,64 @@
 
         {#if step === 3}
             <div class="flex flex-col md:flex-row gap-8">
+                <!-- Preview Section -->
                 <div class="flex-1 h-fit relative">
+                    <!-- Base Sock Image -->
                     <img src={selectedColor.path} alt="Chaussette" class="w-full h-auto object-contain rounded-lg shadow-lg" />
+
+                    <!-- Text Overlay -->
+                    {#if customText || customText2}
+                        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                        <span
+                                class="absolute whitespace-nowrap"
+                                style="
+                                left: {textPosition.x - (customText2 ? 2 : 0)}%;
+                                top: {textPosition.y - (customText2 ? 4 : 0)}%;
+                                transform: translate(-50%, -50%) rotate({textRotation}deg);
+                                color: {textColor};
+                                font-family: {selectedFont};
+                                font-size: {textSize}px;
+                            "
+                        >{customText}</span>
+                            {#if customText2}
+                                <span
+                                        class="absolute whitespace-nowrap"
+                                        style="
+                                    left: {textPosition.x}%;
+                                    top: {textPosition.y + (customText ? 4 : 0)}%;
+                                    transform: translate(-50%, -50%) rotate({textRotation}deg);
+                                    color: {textColor};
+                                    font-family: {selectedFont};
+                                    font-size: {textSize}px;
+                                "
+                                >{customText2}</span>
+                            {/if}
+                        </div>
+                    {/if}
+
+                    <!-- Custom Image Overlay -->
                     {#if displayedImage}
-                        <div
-                                class="absolute top-0 left-0 w-full h-full overflow-hidden"
-                                style="pointer-events: none;"
-                        >
+                        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                             <img
                                     src={displayedImage}
                                     alt="Image personnalisée"
                                     class="absolute object-contain"
                                     class:rounded-full={isRoundImage}
                                     style="
-                        left: {imagePosition.x}%;
-                        top: {imagePosition.y}%;
-                        width: {imageSize}%;
-                        transform: translate(-50%, -50%) rotate(-10deg);
-                        opacity: {imageOpacity};
-                        mix-blend-mode: {imageBlendMode};
-                        filter: contrast(1.1) saturate(1.1);
-                        background-color: {backgroundColor};
-                    "
+                            left: {imagePosition.x}%;
+                            top: {imagePosition.y}%;
+                            width: {imageSize}%;
+                            transform: translate(-50%, -50%) rotate(-10deg);
+                            opacity: {imageOpacity};
+                            mix-blend-mode: {imageBlendMode};
+                            filter: contrast(1.1) saturate(1.1);
+                            background-color: {backgroundColor};
+                        "
                             />
                         </div>
                     {/if}
+
+                    <!-- Fullscreen Toggle Button -->
                     <button
                             on:click={toggleFullScreen}
                             class="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -340,54 +416,168 @@
                         {/if}
                     </button>
                 </div>
+
+                <!-- Customization Panel -->
                 {#if !isFullScreen}
-                    <div class="flex-1">
-                        <h2 class="text-2xl font-semibold mb-6 flex items-center text-gray-800">
-                            <Upload class="mr-2" />
-                            Importez et placez votre image
-                        </h2>
-                        <div class="mt-4">
-                            <label for="image-upload" class="block text-sm font-medium text-gray-700 mb-2">Choisissez une image</label>
-                            <input
-                                    type="file"
-                                    id="image-upload"
-                                    accept="image/*"
-                                    on:change={handleImageUpload}
-                                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                            />
-                        </div>
-                        {#if uploadedImage}
-                            <div class="mt-4">
-                                <img src={uploadedImage} alt="Image uploadée" class="w-full h-auto object-contain rounded-lg shadow-lg" />
-                                <button
-                                        on:click={cropImage}
-                                        class="mt-4 w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
-                                        disabled={isLoading}
-                                >
-                                    <Scissors class="mr-2" />
-                                    {isLoading ? 'Détourage en cours...' : 'Détourer l\'image'}
-                                </button>
+                    <div class="flex-1 space-y-8">
+                        <!-- Text Customization Section -->
+                        {#if techProd == "Lettrage" }
+                            <div>
+                                <h2 class="text-2xl font-semibold mb-6 flex items-center text-gray-800">
+                                    <Type class="mr-2" />
+                                    Personnalisez votre texte
+                                </h2>
+
+                                <div class="space-y-4">
+                                    <!-- Text Input -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Texte Ligne 1 (max 8 caractères)
+                                        </label>
+                                        <input
+                                                type="text"
+                                                bind:value={customText}
+                                                maxlength="8"
+                                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="Votre texte ici"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Texte Ligne 2 (max 8 caractères)
+                                        </label>
+                                        <input
+                                                type="text"
+                                                bind:value={customText2}
+                                                maxlength="8"
+                                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="Votre texte ici"
+                                        />
+                                    </div>
+
+                                    {#if textError}
+                                        <p class="text-red-500 text-sm mt-1">{textError}</p>
+                                    {/if}
+
+                                    <!-- Font Selection -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Police de caractères
+                                        </label>
+                                        <select
+                                                bind:value={selectedFont}
+                                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        >
+                                            {#each fonts as font}
+                                                <option value={font.value} style="font-family: {font.value}">
+                                                    {font.name}
+                                                </option>
+                                            {/each}
+                                        </select>
+                                    </div>
+
+                                    <!-- Text Color -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Couleur du texte
+                                        </label>
+                                        <input
+                                                type="color"
+                                                bind:value={textColor}
+                                                class="w-full h-10 p-1 border border-gray-300 rounded"
+                                        />
+                                    </div>
+
+
+                                </div>
                             </div>
                         {/if}
-                        {#if displayedImage}
-                            <div class="mt-4">
-                                <h3 class="text-lg font-semibold mb-2">Ajustez l'image :</h3>
-                                <div class="flex flex-wrap gap-2 mb-2">
-                                    <button on:click={toggleRoundImage} class="p-2 bg-blue-100 rounded">
-                                        {isRoundImage ? 'Image carrée' : 'Image ronde'}
-                                    </button>
-                                </div>
-                                <div class="mt-2">
-                                    <label for="background-color" class="block text-sm font-medium text-gray-700 mb-1">Couleur de fond</label>
+
+                        <!-- Image Upload Section -->
+                        {#if techProd != "Lettrage" }
+                            <div>
+                                <h2 class="text-2xl font-semibold mb-6 flex items-center text-gray-800">
+                                    <Upload class="mr-2" />
+                                    Importez et placez votre image
+                                </h2>
+                                <div class="mt-4">
+                                    <label for="image-upload" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Choisissez une image
+                                    </label>
                                     <input
-                                            type="color"
-                                            id="background-color"
-                                            bind:value={backgroundColor}
-                                            class="w-full h-10 p-1 border border-gray-300 rounded"
+                                            type="file"
+                                            id="image-upload"
+                                            accept="image/*"
+                                            on:change={handleImageUpload}
+                                            class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                     />
                                 </div>
+                                {#if uploadedImage}
+                                    <div class="mt-4">
+                                        <img src={uploadedImage} alt="Image uploadée" class="w-full h-auto object-contain rounded-lg shadow-lg" />
+                                        <button
+                                                on:click={cropImage}
+                                                class="mt-4 w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
+                                                disabled={isLoading}
+                                        >
+                                            <Scissors class="mr-2" />
+                                            {isLoading ? 'Détourage en cours...' : 'Détourer l\'image'}
+                                        </button>
+                                    </div>
+                                {/if}
+                                {#if displayedImage}
+                                    <div class="mt-4">
+
+                                        {#if techProd == "Sticking" }
+
+                                            <h3 class="text-lg font-semibold mb-2">Ajustez l'image :</h3>
+                                            <div class="flex flex-wrap gap-2 mb-2">
+                                                <button
+                                                        on:click={toggleRoundImage}
+                                                        class="p-2 bg-blue-100 rounded hover:bg-blue-200 transition-colors"
+                                                >
+                                                    <Circle class="mr-2" />
+                                                    {isRoundImage ? 'Image carrée' : 'Image ronde'}
+                                                </button>
+                                            </div>
+
+                                            <div class="mt-2">
+                                                <label for="background-color" class="block text-sm font-medium text-gray-700 mb-1">
+                                                    Couleur de fond
+                                                </label>
+                                                <input
+                                                        type="color"
+                                                        id="background-color"
+                                                        bind:value={backgroundColor}
+                                                        class="w-full h-10 p-1 border border-gray-300 rounded"
+                                                />
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                    Taille de l'image
+                                                </label>
+                                                <div class="flex items-center gap-4">
+                                                    <input
+                                                            type="range"
+                                                            bind:value={imageSize}
+                                                            min="5"
+                                                            max="50"
+                                                            class="flex-1"
+                                                    />
+                                                    <span class="text-sm text-gray-500 w-16 text-right">{imageSize}%</span>
+                                                </div>
+                                            </div>
+
+                                        {/if}
+
+                                    </div>
+                                {/if}
                             </div>
                         {/if}
+
+                        <!-- Finish Button -->
                         <button
                                 on:click={() => alert('Commande finalisée!')}
                                 class="mt-8 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
