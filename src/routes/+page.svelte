@@ -554,22 +554,6 @@
                                                 />
                                             </div>
 
-                                            <div class="mt-4">
-                                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                                    Taille de l'image
-                                                </label>
-                                                <div class="flex items-center gap-4">
-                                                    <input
-                                                            type="range"
-                                                            bind:value={imageSize}
-                                                            min="5"
-                                                            max="50"
-                                                            class="flex-1"
-                                                    />
-                                                    <span class="text-sm text-gray-500 w-16 text-right">{imageSize}%</span>
-                                                </div>
-                                            </div>
-
                                         {/if}
 
                                     </div>
