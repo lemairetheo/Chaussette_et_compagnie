@@ -200,17 +200,17 @@
         pour nous
     </h1>
 
-    <h1 class="fixed text-center text-3xl font-bold text-blue-800 top-[47vh] right-5 w-64">
+    <h1 class="fixed text-center text-3xl  text-blue-800 top-[47vh] right-5 w-64">
         Faible minimum
     </h1>
 
-    <h1 class="fixed text-center text-3xl font-bold text-blue-800 top-[60vh] right-5 w-64">
+    <h1 class="fixed text-center text-3xl  text-blue-800 top-[60vh] right-5 w-64">
         Branding et<br>
         conception<br>
         de A à Z
     </h1>
 
-    <h1 class="fixed text-center text-3xl font-bold text-blue-800 top-[80vh] right-5 w-64">
+    <h1 class="fixed text-center text-3xl  text-blue-800 top-[80vh] right-5 w-64">
         Rapidité<br>
         d'exécution
     </h1>
@@ -221,18 +221,18 @@
         Création<br>sur<br>mesure
     </h1>
 
-    <h1 class="fixed text-center text-3xl font-bold text-blue-800 top-[47vh] left-5 w-64">
+    <h1 class="fixed text-center text-3xl  text-blue-800 top-[47vh] left-5 w-64">
         Un produit<br>
         tendance
     </h1>
 
-    <h1 class="fixed text-center text-3xl font-bold text-blue-800 top-[60vh] left-5 w-64">
+    <h1 class="fixed text-center text-3xl  text-blue-800 top-[60vh] left-5 w-64">
         Une manière<br>
         originale de<br>
         communiquer
     </h1>
 
-    <h1 class="fixed text-center text-3xl font-bold text-blue-800 top-[80vh] left-5 w-64">
+    <h1 class="fixed text-center text-3xl  text-blue-800 top-[80vh] left-5 w-64">
         Un produit<br>
         accessible
     </h1>
