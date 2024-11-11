@@ -267,7 +267,7 @@
                                 class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
                             <div class:clicked={techProd === "Broderie"} class="bg-white p-4  rounded-2xl shadow-lg">
                                 <h3 class="text-xl font-semibold mb-2">Broderie</h3>
-                                <p class:clicked={techProd === "Broderie"} class="text-gray-600 mb-4">Idéal pour vos logos, blasons, emblèmes... Machine de haute précision.</p>
+                                <p class:clicked={techProd === "Broderie"} class="text-gray-600 mb-4">Idéal pour vos logos, blasons, emblèmes... Brodeuse de haute précision.</p>
                                 <div class="grid grid-cols-3 gap-2">
                                     {#each exampleImages.embroidery as image}
                                         <img src={image} alt="Exemple broderie" class="rounded-lg w-full h-36 object-cover object-bottom" />
