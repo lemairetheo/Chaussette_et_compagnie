@@ -192,9 +192,51 @@
 </script>
 
 <main class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4 relative">
-    <img src="/logo.png" alt="logo" class="absolute top-5 right-5 w-64" />
+    <img src="/logo.png" alt="logo" class="fixed top-5 right-5 w-64" />
 
-    <img src="/logo.png" alt="logo" class="absolute top-5 left-5 w-64" />
+    <h1 class="fixed text-center text-4xl font-bold text-red-600 top-[23vh] right-5 w-64">
+        Pour vous<br>
+        comme<br>
+        pour nous
+    </h1>
+
+    <h1 class="fixed text-center text-3xl font-bold text-red-600 top-[44vh] right-5 w-64">
+        Faibles minimum<br>
+        de production
+    </h1>
+
+    <h1 class="fixed text-center text-3xl font-bold text-red-600 top-[60vh] right-5 w-64">
+        Branding et<br>
+        conception<br>
+        de A à Z
+    </h1>
+
+    <h1 class="fixed text-center text-3xl font-bold text-red-600 top-[80vh] right-5 w-64">
+        Rapidité<br>
+        d'execution
+    </h1>
+
+    <img src="/logo.png" alt="logo" class="fixed top-5 left-5 w-64" />
+
+    <h1 class="fixed text-center text-4xl font-bold text-blue-800 top-[23vh] left-5 w-64">
+        Creation<br>sur<br>mesure
+    </h1>
+
+    <h1 class="fixed text-center text-3xl font-bold text-blue-800 top-[44vh] left-5 w-64">
+        Un produit<br>
+        tendance
+    </h1>
+
+    <h1 class="fixed text-center text-3xl font-bold text-blue-800 top-[60vh] left-5 w-64">
+        Une manière<br>
+        originale de<br>
+        communiquer
+    </h1>
+
+    <h1 class="fixed text-center text-3xl font-bold text-blue-800 top-[80vh] left-5 w-64">
+        Un produit<br>
+        accessible
+    </h1>
 
     {#if step > 1}
         <button
@@ -293,7 +335,7 @@
                     <label for="productionReason" class="block text-sm font-medium text-gray-700 mb-1">Parlez nous de votre projet</label>
                     <div class="relative">
                         <FileText class="absolute left-3 top-3 text-gray-400" size={20} />
-                        <textarea bind:value={formData.productionReason} id="productionReason" placeholder="Mariage, Entreprise ou toute autres informations" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3"></textarea>
+                        <textarea bind:value={formData.productionReason} id="productionReason" placeholder="Événement important, cadeaux d'invités ou d'annonciation pour un mariage, cadeaux d'affaires, cadeaux clients, support original de communication... Donnez nous le maximum d'information pour comprendre au mieux votre besoin." required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3"></textarea>
                     </div>
                 </div>
 
