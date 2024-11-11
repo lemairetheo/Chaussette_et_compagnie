@@ -251,7 +251,7 @@
         {#if step === 1}
             <form on:submit|preventDefault={handleSubmit} class="space-y-6">
                 <div>
-                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">Date de livraison souhaitée (Il faut 1 mois après validation du projet)</label>
+                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">Date de livraison souhaitée (⚠️ Il faut environ un mois après validation du projet)</label>
                     <div class="relative">
                         <Calendar class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                         <input bind:value={formData.dueDate} type="date" id="dueDate" required min={minDateString} class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
