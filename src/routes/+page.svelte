@@ -65,18 +65,18 @@
     const exampleImages = {
         sticking: [
             '/exemple/sticking1.jpg',
-            '/exemple/sticking3.png',
-            '/exemple/sticking2.png'
+            '/exemple/sticking3.jpg',
+            '/exemple/sticking2.jpg'
         ],
         embroidery: [
-            '/exemple/broderie1.png',
-            '/exemple/broderie2.png',
-            '/exemple/broderie3.png'
+            '/exemple/broderie1.jpg',
+            '/exemple/broderie2.jpg',
+            '/exemple/broderie3.jpg'
         ],
         lettrage: [
-            '/exemple/lettrage1.png',
+            '/exemple/lettrage1.jpg',
             '/exemple/lettrage2.jpg',
-            '/exemple/lettrage3.png'
+            '/exemple/lettrage3.jpg'
         ]
     };
 
