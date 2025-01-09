@@ -127,7 +127,7 @@
                 const formData = new FormData();
                 formData.append('image', await fetch(uploadedImage).then(res => res.blob()), 'image.jpg');
 
-                const shopifyResponse = await fetch('http://localhost:3000/orders/upload-image', {
+                const shopifyResponse = await fetch('https://api-sock.vercel.app/orders/upload-image', {
                     method: 'POST',
                     body: formData,
                 });
@@ -160,7 +160,7 @@
             };
 
             // Envoyer les données à l'API NestJS
-            const response = await fetch('http://localhost:3000/orders', {
+            const response = await fetch('https://api-sock.vercel.app/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -196,7 +196,7 @@
 
         try {
             // Envoyer les données à l'API NestJS
-            const response = await fetch('http://localhost:3000/orders/first-step', {
+            const response = await fetch('https://api-sock.vercel.app/orders/first-step', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
