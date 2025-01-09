@@ -110,13 +110,126 @@
 
     $: displayedImage = croppedImage || uploadedImage;
 
+    async function finalizeOrder() {
+        // Récupérer l'ID de la première étape depuis localStorage
+        const firstStepId = localStorage.getItem('firstStepId');
 
-    function handleSubmit() {
-        if (formData.quantity < 50) {
-            alert('La quantité minimum est de 50 paires.');
+        if (!firstStepId) {
+            alert('Erreur : Les informations de la première étape sont manquantes.');
             return;
         }
-        step++;
+
+        try {
+            let shopifyImageUrl = null;
+
+            // Si une image a été uploadée, l'envoyer à Shopify
+            if (uploadedImage) {
+                const formData = new FormData();
+                formData.append('image', await fetch(uploadedImage).then(res => res.blob()), 'image.jpg');
+
+                const shopifyResponse = await fetch('http://localhost:3000/orders/upload-image', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (shopifyResponse.ok) {
+                    const shopifyResult = await shopifyResponse.json();
+                    shopifyImageUrl = shopifyResult.imageUrl; // Récupérer l'URL de l'image sur Shopify
+                    console.log('Image uploaded to Shopify:', shopifyImageUrl);
+                } else {
+                    console.error('Erreur lors de l\'upload de l\'image sur Shopify:', await shopifyResponse.text());
+                    alert('Erreur lors de l\'upload de l\'image. Veuillez réessayer.');
+                    return;
+                }
+            }
+
+            // Préparer les données de la commande complète
+            const completeOrderData = {
+                firstStepId: firstStepId, // ID de la première étape
+                selectedColor: selectedColor, // Couleur sélectionnée
+                customText: customText, // Texte personnalisé
+                customText2: customText2, // Deuxième ligne de texte personnalisé
+                selectedFont: selectedFont, // Police sélectionnée
+                textColor: textColor, // Couleur du texte
+                textSize: textSize, // Taille du texte
+                textRotation: textRotation, // Rotation du texte
+                textPosition: textPosition, // Position du texte
+                uploadedImage: shopifyImageUrl || uploadedImage, // Utiliser l'URL Shopify si disponible
+                croppedImage: croppedImage, // URL de l'image détourée
+                techProd: techProd, // Technique de personnalisation (Broderie, Lettrage, Sticking)
+            };
+
+            // Envoyer les données à l'API NestJS
+            const response = await fetch('http://localhost:3000/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(completeOrderData),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Commande finalisée avec succès:', result);
+                alert('Votre commande a été enregistrée avec succès !');
+                // Rediriger l'utilisateur ou réinitialiser le formulaire
+            } else {
+                console.error('Erreur lors de la finalisation de la commande:', await response.text());
+                alert('Erreur lors de la finalisation de la commande. Veuillez réessayer.');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Une erreur s\'est produite. Veuillez réessayer.');
+        }
+    }
+
+    async function saveFirstStep() {
+        // Préparer les données de la première étape
+        const firstStepData = {
+            dueDate: formData.dueDate,
+            productionReason: formData.productionReason,
+            quantity3641: formData.quantity3641,
+            quantity3945: formData.quantity3945,
+            email: formData.email,
+            techProd: techProd,
+        };
+
+        try {
+            // Envoyer les données à l'API NestJS
+            const response = await fetch('http://localhost:3000/orders/first-step', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(firstStepData),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('First step saved:', result);
+
+                // Stocker l'ID de la première étape pour l'utiliser plus tard
+                localStorage.setItem('firstStepId', result.id);
+
+                // Passer à l'étape suivante
+                step++;
+            } else {
+                console.error('Failed to save first step');
+                alert('Erreur lors de la sauvegarde des informations. Veuillez réessayer.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Une erreur s\'est produite. Veuillez réessayer.');
+        }
+    }
+
+    // Modifier la fonction handleSubmit pour appeler saveFirstStep
+    function handleSubmit() {
+        if (formData.quantity3641 < min_paire && formData.quantity3945 < min_paire) {
+            alert(`La quantité minimum est de ${min_paire} paires.`);
+            return;
+        }
+        saveFirstStep(); // Appeler la fonction pour sauvegarder les données
     }
 
     async function handleImageUpload(event) {
@@ -194,48 +307,51 @@
 <main class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4 relative">
     <img src="/logo.png" alt="logo" class="fixed top-5 right-5 w-64" />
 
-    <h1 class="fixed text-center text-5xl font-bold text-blue-800 top-[23vh] right-5 w-64">
-        Pour vous<br>
-        comme<br>
-        pour nous
-    </h1>
+    <div class="xl:block hidden">
+        <h1 class="fixed text-center text-5xl font-bold text-blue-800 top-[23vh] right-5 w-64">
+            Pour vous<br>
+            comme<br>
+            pour nous
+        </h1>
 
-    <h1 class="fixed text-center text-3xl  text-blue-800 top-[47vh] right-5 w-64">
-        Faible minimum
-    </h1>
+        <h1 class="fixed text-center text-3xl  text-blue-800 top-[47vh] right-5 w-64">
+            Faible minimum
+        </h1>
 
-    <h1 class="fixed text-center text-3xl  text-blue-800 top-[60vh] right-5 w-64">
-        Branding et<br>
-        conception<br>
-        de A à Z
-    </h1>
+        <h1 class="fixed text-center text-3xl  text-blue-800 top-[60vh] right-5 w-64">
+            Branding et<br>
+            conception<br>
+            de A à Z
+        </h1>
 
-    <h1 class="fixed text-center text-3xl  text-blue-800 top-[80vh] right-5 w-64">
-        Rapidité<br>
-        d'exécution
-    </h1>
+        <h1 class="fixed text-center text-3xl  text-blue-800 top-[80vh] right-5 w-64">
+            Rapidité<br>
+            d'exécution
+        </h1>
 
-    <img src="/logo.png" alt="logo" class="fixed top-5 left-5 w-64" />
+        <img src="/logo.png" alt="logo" class="fixed top-5 left-5 w-64" />
 
-    <h1 class="fixed text-center text-5xl font-bold text-blue-800 top-[23vh] left-5 w-64">
-        Création<br>sur<br>mesure
-    </h1>
+        <h1 class="fixed text-center text-5xl font-bold text-blue-800 top-[23vh] left-5 w-64">
+            Création<br>sur<br>mesure
+        </h1>
 
-    <h1 class="fixed text-center text-3xl  text-blue-800 top-[47vh] left-5 w-64">
-        Un produit<br>
-        tendance
-    </h1>
+        <h1 class="fixed text-center text-3xl  text-blue-800 top-[47vh] left-5 w-64">
+            Un produit<br>
+            tendance
+        </h1>
 
-    <h1 class="fixed text-center text-3xl  text-blue-800 top-[60vh] left-5 w-64">
-        Une manière<br>
-        originale de<br>
-        communiquer
-    </h1>
+        <h1 class="fixed text-center text-3xl  text-blue-800 top-[60vh] left-5 w-64">
+            Une manière<br>
+            originale de<br>
+            communiquer
+        </h1>
 
-    <h1 class="fixed text-center text-3xl  text-blue-800 top-[80vh] left-5 w-64">
-        Un produit<br>
-        accessible
-    </h1>
+        <h1 class="fixed text-center text-3xl  text-blue-800 top-[80vh] left-5 w-64">
+            Un produit<br>
+            accessible
+        </h1>
+    </div>
+
 
     {#if step > 1}
         <button
@@ -604,7 +720,7 @@
 
                         <!-- Finish Button -->
                         <button
-                                on:click={() => alert('Commande finalisée!')}
+                                on:click={finalizeOrder}
                                 class="mt-8 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
                             Finaliser la commande
