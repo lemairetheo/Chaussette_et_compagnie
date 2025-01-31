@@ -266,10 +266,10 @@
         isFullScreen = !isFullScreen;
         if (isFullScreen) {
             textSize = 40;
-            imagePosition = { x: 30, y: 36 };
+            imagePosition = { x: 30, y: 38 };
         } else {
             textSize = 20;
-            imagePosition = { x: 30, y: 35 };
+            imagePosition = { x: 30, y: 37 };
         }
     }
 
