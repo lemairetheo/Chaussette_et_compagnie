@@ -111,7 +111,7 @@
     let uploadedImage = null;
     let croppedImage = null;
     let isLoading = false;
-    let imagePosition = { x: 30, y: 36 };
+    let imagePosition = { x: 30, y: 38 };
     let imageSize = 15;
     let imageOpacity = 1;
     let imageBlendMode = 'normal';
