@@ -320,7 +320,7 @@
 </script>
 
 <main class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4 relative">
-    <img src="/logo.png" alt="logo" class="fixed top-5 right-5 w-64" />
+    <img src="/logo.png" alt="logo" class="md:block fixed hidden top-5 right-5 w-64" />
 
     <div class="xl:block hidden">
         <h1 class="fixed text-center text-5xl font-bold text-blue-800 top-[23vh] right-5 w-64">
