@@ -1,5 +1,18 @@
 <script>
     import { Palette, Calendar, Ruler, FileText, Package, Mail, Upload, Scissors, Circle, Maximize2, Minimize2, ArrowLeft, Type } from 'lucide-svelte'
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    import { initializeApp } from "firebase/app";
+    import { onMount } from "svelte";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDiO5a8OxZ3kDNdaALZUbSIxH5dnlLJ7fU",
+        authDomain: "chaussettesetcompagnie-ea084.firebaseapp.com",
+        projectId: "chaussettesetcompagnie-ea084",
+        storageBucket: "chaussettesetcompagnie-ea084.firebasestorage.app",
+        messagingSenderId: "1084007280685",
+        appId: "1:1084007280685:web:ef7f79d222d401adf288a4",
+        measurementId: "G-8B7Y17Q90V"
+    };
 
     const allSockColors = [
         { id: 1, path: '/chaussettes_color/Blanc.jpg', hex: '#FFFFFF', name: 'Blanc', sizes: ['36-41', '39-45'] },
@@ -104,14 +117,17 @@
     let imageBlendMode = 'normal';
     let isRoundImage = false;
     let backgroundColor = '';
+    let wantCartoline = false;
     let techProd = null
     let min_paire= 50
 
 
     $: displayedImage = croppedImage || uploadedImage;
 
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage(app);
+
     async function finalizeOrder() {
-        // Récupérer l'ID de la première étape depuis localStorage
         const firstStepId = localStorage.getItem('firstStepId');
 
         if (!firstStepId) {
@@ -122,45 +138,37 @@
         try {
             let shopifyImageUrl = null;
 
-            // Si une image a été uploadée, l'envoyer à Shopify
-            if (uploadedImage) {
-                const formData = new FormData();
-                formData.append('image', await fetch(uploadedImage).then(res => res.blob()), 'image.jpg');
+            if (imageFile) {
+                console.log("Uploading image:", imageFile);
+                const storageRef = ref(storage, `images/${imageFile.name}`);
 
-                const shopifyResponse = await fetch('https://api-sock.vercel.app/orders/upload-image', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (shopifyResponse.ok) {
-                    const shopifyResult = await shopifyResponse.json();
-                    shopifyImageUrl = shopifyResult.imageUrl; // Récupérer l'URL de l'image sur Shopify
-                    console.log('Image uploaded to Shopify:', shopifyImageUrl);
-                } else {
-                    console.error('Erreur lors de l\'upload de l\'image sur Shopify:', await shopifyResponse.text());
-                    alert('Erreur lors de l\'upload de l\'image. Veuillez réessayer.');
-                    return;
+                try {
+                    const snapshot = await uploadBytes(storageRef, imageFile);
+                    shopifyImageUrl = await getDownloadURL(snapshot.ref);
+                    console.log("Image uploaded successfully:", shopifyImageUrl);
+                } catch (error) {
+                    console.error("Upload failed:", error);
+                    throw error;
                 }
             }
 
-            // Préparer les données de la commande complète
             const completeOrderData = {
-                firstStepId: firstStepId, // ID de la première étape
-                selectedColor: selectedColor, // Couleur sélectionnée
-                customText: customText, // Texte personnalisé
-                customText2: customText2, // Deuxième ligne de texte personnalisé
-                selectedFont: selectedFont, // Police sélectionnée
-                textColor: textColor, // Couleur du texte
-                textSize: textSize, // Taille du texte
-                textRotation: textRotation, // Rotation du texte
-                textPosition: textPosition, // Position du texte
-                uploadedImage: shopifyImageUrl || uploadedImage, // Utiliser l'URL Shopify si disponible
-                croppedImage: croppedImage, // URL de l'image détourée
-                techProd: techProd, // Technique de personnalisation (Broderie, Lettrage, Sticking)
+                firstStepId: firstStepId,
+                selectedColor: selectedColor,
+                customText: customText,
+                customText2: customText2,
+                selectedFont: selectedFont,
+                textColor: textColor,
+                textSize: textSize,
+                textRotation: textRotation,
+                textPosition: textPosition,
+                uploadedImage: shopifyImageUrl,
+                croppedImage: croppedImage,
+                techProd: techProd,
+                wantCartoline: wantCartoline
             };
 
-            // Envoyer les données à l'API NestJS
-            const response = await fetch('https://api-sock.vercel.app/orders', {
+            const response = await fetch('http://localhost:3000/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -171,17 +179,16 @@
             if (response.ok) {
                 const result = await response.json();
                 console.log('Commande finalisée avec succès:', result);
-                alert('Votre commande a été enregistrée avec succès !');
-                // Rediriger l'utilisateur ou réinitialiser le formulaire
+                step++; // Passer à l'étape 4
             } else {
-                console.error('Erreur lors de la finalisation de la commande:', await response.text());
-                alert('Erreur lors de la finalisation de la commande. Veuillez réessayer.');
+                throw new Error('Erreur lors de la finalisation de la commande');
             }
         } catch (error) {
             console.error('Erreur:', error);
             alert('Une erreur s\'est produite. Veuillez réessayer.');
         }
     }
+
 
     async function saveFirstStep() {
         // Préparer les données de la première étape
@@ -196,7 +203,7 @@
 
         try {
             // Envoyer les données à l'API NestJS
-            const response = await fetch('https://api-sock.vercel.app/orders/first-step', {
+            const response = await fetch('http://localhost:3000/orders/first-step', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -232,14 +239,25 @@
         saveFirstStep(); // Appeler la fonction pour sauvegarder les données
     }
 
+    let imageFile = null;
+
     async function handleImageUpload(event) {
         const file = event.target.files[0];
-        if (file) {
-            uploadedImage = URL.createObjectURL(file);
-            if (croppedImage) {
-                croppedImage = uploadedImage;
-            }
+        if (!file) {
+            console.error("Aucun fichier sélectionné !");
+            return;
         }
+
+        // Stocker le fichier pour l'upload ultérieur
+        imageFile = file;
+
+        // Créer l'URL de prévisualisation pour l'affichage
+        uploadedImage = URL.createObjectURL(file);
+
+        // Si on a une image détourée, on la réinitialise
+        croppedImage = null;
+
+        console.log("Image sélectionnée :", file);
     }
 
     let isFullScreen = false;
@@ -262,9 +280,7 @@
         isLoading = true;
 
         const formData = new FormData();
-        const response = await fetch(uploadedImage);
-        const blob = await response.blob();
-        formData.append('imageFile', blob, 'image.jpg');
+        formData.append('imageFile', imageFile, 'image.jpg');  // Utiliser imageFile ici
         formData.append('background.color', 'transparent');
         formData.append('background.scaling', 'fill');
         formData.append('outputSize', '1000x1000');
@@ -283,7 +299,6 @@
             if (result.ok) {
                 const imageBlob = await result.blob();
                 croppedImage = URL.createObjectURL(imageBlob);
-
             } else {
                 console.error('Erreur lors du détourage:', await result.text());
             }
@@ -729,6 +744,63 @@
                 {/if}
             </div>
         {/if}
+        {#if step === 4}
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-8">
+                <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Personnalisation de la cartoline</h1>
+
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="flex-1">
+                        <img src="/cartoline-example.jpg" alt="Exemple de cartoline" class="w-full h-auto object-contain rounded-lg shadow-lg" />
+                        <p class="text-sm text-gray-500 mt-2 text-center">Exemple de cartoline personnalisée</p>
+                    </div>
+
+                    <div class="flex-1 space-y-6">
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <h2 class="text-2xl font-semibold mb-4 text-gray-800">La cartoline, qu'est-ce que c'est ?</h2>
+                            <p class="text-gray-700">La cartoline est un support cartonné qui accompagne vos chaussettes. Elle peut être entièrement personnalisée pour créer une présentation unique et mémorable de votre produit.</p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-semibold text-gray-800">Souhaitez-vous personnaliser la cartoline ?</h3>
+
+                            <div class="flex gap-4">
+                                <button
+                                        on:click={() => wantCartoline = true}
+                                        class:clicked={wantCartoline}
+                                        class="flex-1 py-3 px-4 rounded-lg text-white bg-gray-50 text-black hover:bg-blue-700 transition-colors ">
+                                    Oui, je suis intéressé(e)
+                                </button>
+                                <button
+                                        on:click={() => wantCartoline = false}
+                                        class:clicked={!wantCartoline}
+                                        class="flex-1 py-3 px-4 rounded-lg border border-gray-50 text-black hover:bg-blue-700 transition-colors">
+                                    Non merci
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-2 text-gray-800">Comment ça marche ?</h3>
+                            <ul class="space-y-2 text-gray-700">
+                                <li>✓ Notre équipe vous recontactera pour discuter de vos besoins</li>
+                                <li>✓ Nous vous proposerons plusieurs designs personnalisés</li>
+                                <li>✓ Vous pourrez choisir les finitions (papier, découpe, etc.)</li>
+                                <li>✓ Un devis spécifique vous sera fourni</li>
+                            </ul>
+                        </div>
+
+                        <button
+                                on:click={() => {
+                            alert('Merci pour votre commande ! ' + (wantCartoline ? 'Nous vous recontacterons bientôt pour la personnalisation de votre cartoline.' : ''));
+                            window.location.href = '/';
+                        }}
+                                class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                            Terminer la commande
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {/if}
     </div>
 </main>
 
@@ -738,6 +810,7 @@
     :global(body) {
         font-family: 'Poppins', sans-serif;
     }
+
 
     .clicked {
         @apply bg-blue-800 text-white hover:scale-100;
