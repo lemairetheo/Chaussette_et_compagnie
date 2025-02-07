@@ -2,7 +2,7 @@
     import { Palette, Calendar, Ruler, FileText, Package, Mail, Upload, Scissors, Circle, Maximize2, Minimize2, ArrowLeft, Type } from 'lucide-svelte'
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
     import { initializeApp } from "firebase/app";
-    import { onMount } from "svelte";
+
 
     const firebaseConfig = {
         apiKey: "AIzaSyDiO5a8OxZ3kDNdaALZUbSIxH5dnlLJ7fU",
@@ -60,17 +60,41 @@
     let textColor = '#000000';
     let textSize = 20;
     let textRotation = -10;
-    let textPosition = { x: 30, y: 36 };
+    let textPosition = { x: 30, y: 37 };
 
     const fonts = [
-        { name: 'Pacifico', value: 'Pacifico' },
-        { name: 'Arial', value: 'Arial' },
-        { name: 'Times New Roman', value: 'Times New Roman' },
-        { name: 'Roboto', value: 'Roboto' },
-        { name: 'Playfair Display', value: 'Playfair Display' },
-        { name: 'Comic Sans MS', value: 'Comic Sans MS' },
-        { name: 'Impact', value: 'Impact' },
+        { name: 'Pacifico', value: 'Pacifico', defaultSize: 20 },
+        { name: 'Meow Script', value: 'Meow Script', defaultSize: 28 },
+        { name: 'League Script', value: 'League Script', defaultSize: 20 },
+        { name: 'Bilbo', value: 'Bilbo', defaultSize: 28 },
+        { name: 'Charm', value: 'Charm', defaultSize: 23 },
+        { name: 'Italianno', value: 'Italianno', defaultSize: 30 },
+        { name: 'Impact', value: 'Impact', defaultSize: 20 },
     ];
+
+    const colors = [
+        { hex: '#000000', name: 'Noir' },
+        { hex: '#FFFFFF', name: 'Blanc' },
+        { hex: '#C41E3A', name: 'Rouge' },
+        { hex: '#1B4D89', name: 'Bleu marine' },
+        { hex: '#B76E79', name: 'Rose poudré' },
+        { hex: '#006B54', name: 'Vert émeraude' },
+        { hex: '#feb500', name: 'Or' },
+        { hex: '#C0C0C0', name: 'Argent' },
+        { hex: '#4B0082', name: 'Indigo' },
+        { hex: '#800020', name: 'Bordeaux' },
+        { hex: '#06005d', name: 'Bleu nuit' },
+        { hex: '#704214', name: 'Brun' },
+        { hex: '#FF69B4', name: 'Rose vif' },
+        { hex: '#FF8C00', name: 'Orange' },
+        { hex: '#4169E1', name: 'Bleu royal' },
+        { hex: '#228B22', name: 'Vert forêt' },
+        { hex: '#BA55D3', name: 'Violet' },
+        { hex: '#CD853F', name: 'Beige' },
+        { hex: '#FF4500', name: 'Rouge orangé' },
+        { hex: '#20B2AA', name: 'Turquoise' }
+    ];
+
 
     $: isTextValid = customText.length <= 16;
     $: textError = !isTextValid ? 'Le texte ne peut pas dépasser 16 caractères' : '';
@@ -82,9 +106,9 @@
             '/exemple/sticking2.jpg'
         ],
         embroidery: [
-            '/exemple/broderie1.jpg',
+            '/exemple/broderie4.webp',
             '/exemple/broderie2.jpg',
-            '/exemple/broderie3.jpg'
+            '/exemple/broderie3.jpeg'
         ],
         lettrage: [
             '/exemple/lettrage1.jpg',
@@ -111,7 +135,7 @@
     let uploadedImage = null;
     let croppedImage = null;
     let isLoading = false;
-    let imagePosition = { x: 30, y: 38 };
+    let imagePosition = { x: 30, y: 43 };
     let imageSize = 15;
     let imageOpacity = 1;
     let imageBlendMode = 'normal';
@@ -168,7 +192,7 @@
                 wantCartoline: wantCartoline
             };
 
-            const response = await fetch('http://localhost:3000/orders', {
+            const response = await fetch('https://api-sock.vercel.app/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -189,6 +213,11 @@
         }
     }
 
+    function getDefaultSize(fontName) {
+        const font = fonts.find(f => f.name === fontName);
+        return font ? font.defaultSize : null; // Retourne la taille par défaut ou null si non trouvé
+    }
+
 
     async function saveFirstStep() {
         // Préparer les données de la première étape
@@ -203,7 +232,7 @@
 
         try {
             // Envoyer les données à l'API NestJS
-            const response = await fetch('http://localhost:3000/orders/first-step', {
+            const response = await fetch('https://api-sock.vercel.app/orders/first-step', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -265,11 +294,13 @@
     function toggleFullScreen() {
         isFullScreen = !isFullScreen;
         if (isFullScreen) {
-            textSize = 40;
-            imagePosition = { x: 30, y: 38 };
+            let size = getDefaultSize(selectedFont);
+            console.log(size);
+            textSize = size + 40;
+            imagePosition = { x: 30, y: 43 };
         } else {
-            textSize = 20;
-            imagePosition = { x: 30, y: 37 };
+            textSize = getDefaultSize(selectedFont);
+            imagePosition = { x: 30, y: 43 };
         }
     }
 
@@ -317,7 +348,71 @@
     const minDate = new Date();
     minDate.setDate(minDate.getDate() + 28);
     const minDateString = minDate.toISOString().split('T')[0];
+
+    let hue = 0;
+    let saturation = 100;
+    let lightness = 50;
+    let isDragging = false;
+
+
+    function updateColor(e, rect) {
+        // Get coordinates relative to picker element
+        const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+        const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
+
+        // Convert to percentages
+        // Invert the saturation calculation to match the visual gradient
+        saturation = Math.round((x / rect.width) * 100);
+
+        // Ajust lightness calculation to match visual gradient
+        // When y is 0 (top), lightness should be 100%
+        // When y is rect.height (bottom), lightness should be 0%
+        lightness = Math.round(100 - (y / rect.height) * 100);
+
+        // Clamp values to ensure they stay within valid ranges
+        saturation = Math.max(0, Math.min(100, saturation));
+        lightness = Math.max(0, Math.min(100, lightness));
+    }
+
+    function handleMouseDown(e) {
+        isDragging = true;
+        const rect = e.currentTarget.getBoundingClientRect();
+        updateColor(e, rect);
+    }
+
+    function handleMouseMove(e) {
+        if (!isDragging) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        updateColor(e, rect);
+    }
+
+    function handleMouseUp() {
+        isDragging = false;
+    }
+
+    function handleTouchStart(e) {
+        const touch = e.touches[0];
+        const rect = e.currentTarget.getBoundingClientRect();
+        const mouseEvent = {
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        };
+        updateColor(mouseEvent, rect);
+    }
+
+    function handleTouchMove(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const rect = e.currentTarget.getBoundingClientRect();
+        const mouseEvent = {
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        };
+        updateColor(mouseEvent, rect);
+    }
 </script>
+
+
 
 <main class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4 relative">
     <img src="/logo.png" alt="logo" class="md:block fixed hidden top-5 right-5 w-64" />
@@ -530,12 +625,12 @@
                         <span
                                 class="absolute whitespace-nowrap"
                                 style="
-                                left: {textPosition.x - (customText2 ? 2 : 0)}%;
-                                top: {textPosition.y - (customText2 ? 4 : 0)}%;
+                                left: {textPosition.x - (customText2 ? 1 : 0)}%;
+                                top: {textPosition.y - (customText2 ? 1 : 0)}%;
                                 transform: translate(-50%, -50%) rotate({textRotation}deg);
                                 color: {textColor};
                                 font-family: {selectedFont};
-                                font-size: {textSize}px;
+                                font-size: {isFullScreen ? getDefaultSize(selectedFont) + 20 : getDefaultSize(selectedFont)}px;
                             "
                         >{customText}</span>
                             {#if customText2}
@@ -547,7 +642,7 @@
                                     transform: translate(-50%, -50%) rotate({textRotation}deg);
                                     color: {textColor};
                                     font-family: {selectedFont};
-                                    font-size: {textSize}px;
+                                    font-size: {isFullScreen ? getDefaultSize(selectedFont) + 20 : getDefaultSize(selectedFont)}px;
                                 "
                                 >{customText2}</span>
                             {/if}
@@ -570,7 +665,6 @@
                             opacity: {imageOpacity};
                             mix-blend-mode: {imageBlendMode};
                             filter: contrast(1.1) saturate(1.1);
-                            background-color: {backgroundColor};
                         "
                             />
                         </div>
@@ -617,12 +711,12 @@
 
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                                            Texte Ligne 2 (max 8 caractères)
+                                            Texte Ligne 2 (max 7 caractères)
                                         </label>
                                         <input
                                                 type="text"
                                                 bind:value={customText2}
-                                                maxlength="8"
+                                                maxlength="7"
                                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                                 placeholder="Votre texte ici"
                                         />
@@ -650,15 +744,26 @@
                                     </div>
 
                                     <!-- Text Color -->
-                                    <div>
+                                    <div class="space-y-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
                                             Couleur du texte
                                         </label>
-                                        <input
-                                                type="color"
-                                                bind:value={textColor}
-                                                class="w-full h-10 p-1 border border-gray-300 rounded"
-                                        />
+                                        <div class="grid grid-cols-5 gap-3">
+                                            {#each colors as color}
+                                                <button
+                                                        on:click={() => textColor = color.hex}
+                                                        class="group relative"
+                                                >
+                                                    <div
+                                                            class="w-12 h-12 rounded-lg shadow-sm transition-all hover:scale-105 {color.hex === textColor ? 'ring-2 ring-blue-500 ring-offset-2' : 'ring-1 ring-gray-200'} {color.hex === '#FFFFFF' ? 'border border-gray-200' : ''}"
+                                                            style="background-color: {color.hex}"
+                                                    />
+                                                    <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    {color.name}
+                </span>
+                                                </button>
+                                            {/each}
+                                        </div>
                                     </div>
 
 
@@ -701,32 +806,7 @@
                                 {#if displayedImage}
                                     <div class="mt-4">
 
-                                        {#if techProd == "Sticking" }
 
-                                            <h3 class="text-lg font-semibold mb-2">Ajustez l'image :</h3>
-                                            <div class="flex flex-wrap gap-2 mb-2">
-                                                <button
-                                                        on:click={toggleRoundImage}
-                                                        class="p-2 bg-blue-100 rounded hover:bg-blue-200 transition-colors"
-                                                >
-                                                    <Circle class="mr-2" />
-                                                    {isRoundImage ? 'Image carrée' : 'Image ronde'}
-                                                </button>
-                                            </div>
-
-                                            <div class="mt-2">
-                                                <label for="background-color" class="block text-sm font-medium text-gray-700 mb-1">
-                                                    Couleur de fond
-                                                </label>
-                                                <input
-                                                        type="color"
-                                                        id="background-color"
-                                                        bind:value={backgroundColor}
-                                                        class="w-full h-10 p-1 border border-gray-300 rounded"
-                                                />
-                                            </div>
-
-                                        {/if}
 
                                     </div>
                                 {/if}
@@ -767,7 +847,7 @@
                                 <button
                                         on:click={() => wantCartoline = true}
                                         class:clicked={wantCartoline}
-                                        class="flex-1 py-3 px-4 rounded-lg text-white bg-gray-50 text-black hover:bg-blue-700 transition-colors ">
+                                        class="flex-1 py-3 px-4 rounded-lg  bg-gray-50 text-black hover:bg-blue-700 transition-colors ">
                                     Oui, je suis intéressé(e)
                                 </button>
                                 <button
@@ -810,7 +890,6 @@
     :global(body) {
         font-family: 'Poppins', sans-serif;
     }
-
 
     .clicked {
         @apply bg-blue-800 text-white hover:scale-100;
