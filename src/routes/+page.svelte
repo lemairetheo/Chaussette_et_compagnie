@@ -44,7 +44,7 @@
     ];
 
     let selectedColor = allSockColors[0];
-    let step = 4;
+    let step = 1;
     let formData = {
         dueDate: '',
         size: '',
