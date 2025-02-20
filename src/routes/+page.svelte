@@ -540,14 +540,14 @@
                 </div>
 
                 <div>
-                    <label for="size" class="block text-sm font-medium text-gray-700 mb-1">Technique de personnalisation</label>
+                    <label for="size" class="block text-2xl font-medium text-gray-700 mb-1">3 Possibilité de personnalisation</label>
                     <div class="flex gap-4 flex-col space-y-4">
                         <div
                                 on:click={() => {techProd = "Broderie", min_paire = 50}}
                                 class:clicked={techProd === "Broderie"}
                                 class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
                             <div class:clicked={techProd === "Broderie"} class="bg-white p-4  rounded-2xl shadow-lg">
-                                <h3 class="text-xl font-semibold mb-2">Broderie</h3>
+                                <h3 class="text-xl font-semibold mb-2">1. Broderie</h3>
                                 <p class:clicked={techProd === "Broderie"} class="text-gray-600 mb-4">Idéal pour vos logos, blasons, emblèmes... Brodeuse de haute précision.</p>
                                 <div class="grid md:grid-cols-3 grid-rows-3 md:grid-rows-1 gap-2">
                                     {#each exampleImages.embroidery as image}
@@ -562,7 +562,7 @@
                                         class:clicked={techProd === "Lettrage"}
                                         class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
                                     <div class:clicked={techProd === "Lettrage"} class="bg-white p-4  rounded-2xl shadow-lg">
-                                        <h3 class="text-xl font-semibold mb-2">Lettrage</h3>
+                                        <h3 class="text-xl font-semibold mb-2">2. Lettrage</h3>
                                         <p class:clicked={techProd === "Lettrage"} class="text-gray-600 mb-4">Un mot, une date, une punchline... Parce que la concision a toujours raison.</p>
                                         <div class="grid md:grid-cols-3 grid-rows-3 md:grid-rows-1 gap-2">
                                             {#each exampleImages.lettrage as image, i}
@@ -578,7 +578,7 @@
                                         class:clicked={techProd === "Sticking"}
                                         class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
                                     <div class:clicked={techProd === "Sticking"} class="bg-white p-4 rounded-2xl shadow-lg">
-                                        <h3 class="text-xl font-semibold mb-2">Sticking / Flocage</h3>
+                                        <h3 class="text-xl font-semibold mb-2">3. Sticking / Flocage</h3>
                                         <p class:clicked={techProd === "Sticking"} class="text-gray-600 mb-4">Idéal pour vos photos, visuels, et images en tout genre.</p>
                                         <div class="grid md:grid-cols-3 grid-rows-3 md:grid-rows-1 gap-2">
                                             {#each exampleImages.sticking as image}
