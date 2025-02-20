@@ -1,7 +1,9 @@
 <script>
     import { Palette, Calendar, Ruler, FileText, Package, Mail, Upload, Scissors, Circle, Maximize2, Minimize2, ArrowLeft, Type } from 'lucide-svelte'
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
     import { initializeApp } from "firebase/app";
+    import Cropper from 'svelte-easy-crop';
 
 
     const firebaseConfig = {
@@ -61,6 +63,90 @@
     let textSize = 20;
     let textRotation = -10;
     let textPosition = { x: 30, y: 37 };
+    let isCropModalOpen = false;
+    let crop = { x: 0, y: 0 };
+    let zoom = 1;
+    let croppedAreaPixels = null;
+
+
+    async function createImage(url) {
+        return new Promise((resolve, reject) => {
+            const image = new Image();
+            image.addEventListener('load', () => resolve(image));
+            image.addEventListener('error', error => reject(error));
+            image.setAttribute('crossOrigin', 'anonymous');
+            image.src = url;
+        });
+    }
+
+    async function getCroppedImg(imageSrc, crop, zoom = 1) {
+        const image = await createImage(imageSrc);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+            return null;
+        }
+
+        // On définit la taille de sortie souhaitée
+        const outputWidth = 400;
+        const outputHeight = 400;
+        canvas.width = outputWidth;
+        canvas.height = outputHeight;
+
+        // On calcule la taille de la zone visible avec le zoom
+        const visibleArea = {
+            width: image.width / zoom,
+            height: image.height / zoom
+        };
+
+        // On calcule les coordonnées de la zone à découper
+        const cropX = (image.width - visibleArea.width) / 2 + crop.x;
+        const cropY = (image.height - visibleArea.height) / 2 + crop.y;
+
+        // On s'assure que les coordonnées restent dans les limites de l'image
+        const safeX = Math.max(0, Math.min(cropX, image.width - visibleArea.width));
+        const safeY = Math.max(0, Math.min(cropY, image.height - visibleArea.height));
+
+        // On dessine l'image recadrée
+        ctx.drawImage(
+            image,
+            safeX,
+            safeY,
+            visibleArea.width,
+            visibleArea.height,
+            0,
+            0,
+            outputWidth,
+            outputHeight
+        );
+
+        // On convertit en blob et on retourne l'URL
+        return new Promise((resolve) => {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    resolve(URL.createObjectURL(blob));
+                }
+            }, 'image/jpeg', 1);
+        });
+    }
+
+    async function applyCrop() {
+        if (!image || !crop) return;
+
+        try {
+            const croppedImageUrl = await getCroppedImg(image, crop, zoom);
+            if (croppedImageUrl) {
+                uploadedImage = croppedImageUrl;
+                isCropModalOpen = false;
+                // Reset crop and zoom values
+                crop = { x: 0, y: 0 };
+                zoom = 1;
+            }
+        } catch (e) {
+            console.error("Erreur lors du recadrage:", e);
+        }
+    }
 
     const fonts = [
         { name: 'Pacifico', value: 'Pacifico', defaultSize: 20 },
@@ -138,6 +224,7 @@
     let imagePosition = { x: 30, y: 43 };
     let imageSize = 15;
     let imageOpacity = 1;
+    let image = null;
     let imageBlendMode = 'normal';
     let isRoundImage = false;
     let backgroundColor = '';
@@ -340,10 +427,6 @@
         }
     }
 
-    function toggleRoundImage() {
-        isRoundImage = !isRoundImage;
-    }
-
     // Get the minimum date (2 weeks from today)
     const minDate = new Date();
     minDate.setDate(minDate.getDate() + 28);
@@ -374,42 +457,6 @@
         lightness = Math.max(0, Math.min(100, lightness));
     }
 
-    function handleMouseDown(e) {
-        isDragging = true;
-        const rect = e.currentTarget.getBoundingClientRect();
-        updateColor(e, rect);
-    }
-
-    function handleMouseMove(e) {
-        if (!isDragging) return;
-        const rect = e.currentTarget.getBoundingClientRect();
-        updateColor(e, rect);
-    }
-
-    function handleMouseUp() {
-        isDragging = false;
-    }
-
-    function handleTouchStart(e) {
-        const touch = e.touches[0];
-        const rect = e.currentTarget.getBoundingClientRect();
-        const mouseEvent = {
-            clientX: touch.clientX,
-            clientY: touch.clientY
-        };
-        updateColor(mouseEvent, rect);
-    }
-
-    function handleTouchMove(e) {
-        e.preventDefault();
-        const touch = e.touches[0];
-        const rect = e.currentTarget.getBoundingClientRect();
-        const mouseEvent = {
-            clientX: touch.clientX,
-            clientY: touch.clientY
-        };
-        updateColor(mouseEvent, rect);
-    }
 </script>
 
 
@@ -502,9 +549,9 @@
                             <div class:clicked={techProd === "Broderie"} class="bg-white p-4  rounded-2xl shadow-lg">
                                 <h3 class="text-xl font-semibold mb-2">Broderie</h3>
                                 <p class:clicked={techProd === "Broderie"} class="text-gray-600 mb-4">Idéal pour vos logos, blasons, emblèmes... Brodeuse de haute précision.</p>
-                                <div class="grid grid-cols-3 gap-2">
+                                <div class="grid md:grid-cols-3 grid-rows-3 md:grid-rows-1 gap-2">
                                     {#each exampleImages.embroidery as image}
-                                        <img src={image} alt="Exemple broderie" class="rounded-lg w-full h-36 object-cover object-bottom" />
+                                        <img src={image} alt="Exemple broderie" class="rounded-lg w-full h-60 object-cover object-bottom" />
                                     {/each}
                                 </div>
                             </div>
@@ -517,9 +564,9 @@
                                     <div class:clicked={techProd === "Lettrage"} class="bg-white p-4  rounded-2xl shadow-lg">
                                         <h3 class="text-xl font-semibold mb-2">Lettrage</h3>
                                         <p class:clicked={techProd === "Lettrage"} class="text-gray-600 mb-4">Un mot, une date, une punchline... Parce que la concision a toujours raison.</p>
-                                        <div class="grid grid-cols-3 gap-2">
+                                        <div class="grid md:grid-cols-3 grid-rows-3 md:grid-rows-1 gap-2">
                                             {#each exampleImages.lettrage as image, i}
-                                                <img src={image} class:object-bottom={i == 2} alt="Exemple broderie" class="rounded-lg w-full h-36 object-cover" />
+                                                <img src={image} class:object-bottom={i == 2} alt="Exemple broderie" class="rounded-lg w-full h-60 object-cover" />
                                             {/each}
                                         </div>
                                     </div>
@@ -533,9 +580,9 @@
                                     <div class:clicked={techProd === "Sticking"} class="bg-white p-4 rounded-2xl shadow-lg">
                                         <h3 class="text-xl font-semibold mb-2">Sticking / Flocage</h3>
                                         <p class:clicked={techProd === "Sticking"} class="text-gray-600 mb-4">Idéal pour vos photos, visuels, et images en tout genre.</p>
-                                        <div class="grid grid-cols-3 gap-2">
+                                        <div class="grid md:grid-cols-3 grid-rows-3 md:grid-rows-1 gap-2">
                                             {#each exampleImages.sticking as image}
-                                                <img src={image} alt="Exemple sticking" class="rounded-lg w-full h-36 object-cover" />
+                                                <img src={image} alt="Exemple sticking" class="rounded-lg w-full h-60 object-cover" />
                                             {/each}
                                         </div>
                                     </div>
@@ -801,16 +848,19 @@
                                 {#if uploadedImage}
                                     <div class="mt-4">
                                         <img src={uploadedImage} alt="Image uploadée" class="w-full h-auto object-contain rounded-lg shadow-lg" />
-                                        <button
-                                                on:click={cropImage}
-                                                class="mt-4 w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
-                                                disabled={isLoading}
-                                        >
-                                            <Scissors class="mr-2" />
-                                            {isLoading ? 'Détourage en cours...' : 'Détourer l\'image'}
-                                        </button>
+                                        <div class="flex gap-2 mt-4">
+                                            <button
+                                                    on:click={cropImage}
+                                                    class="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
+                                                    disabled={isLoading}
+                                            >
+                                                <Scissors class="mr-2" />
+                                                {isLoading ? 'Détourage en cours...' : 'Détourer l\'image'}
+                                            </button>
+                                        </div>
                                     </div>
                                 {/if}
+
                                 {#if displayedImage}
                                     <div class="mt-4">
 
@@ -890,6 +940,9 @@
             </div>
         {/if}
     </div>
+
+
+
 </main>
 
 <style>
