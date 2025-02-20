@@ -44,7 +44,7 @@
     ];
 
     let selectedColor = allSockColors[0];
-    let step = 1;
+    let step = 4;
     let formData = {
         dueDate: '',
         size: '',
@@ -838,8 +838,8 @@
 
                 <div class="flex flex-col md:flex-row gap-8">
                     <div class="flex-1">
-                        <img src="/cartoline-example.jpg" alt="Exemple de cartoline" class="w-full h-auto object-contain rounded-lg shadow-lg" />
-                        <p class="text-sm text-gray-500 mt-2 text-center">Exemple de cartoline personnalisée</p>
+                        <img src="/cartoline.png" alt="Exemple de cartoline" class="w-full h-auto object-contain rounded-t-lg shadow-lg" />
+                        <img src="/cartoline2.webp" alt="Exemple de cartoline" class="w-full h-auto object-contain rounded-b-lg" />
                     </div>
 
                     <div class="flex-1 space-y-6">
