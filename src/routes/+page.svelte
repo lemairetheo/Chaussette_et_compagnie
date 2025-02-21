@@ -558,7 +558,7 @@
         </div>
 
 
-        <h1 class="md:text-4xl text-2xl font-bold text-center mb-8 text-gray-800">Personnalisez vos chaussettes</h1>
+        <h1 class="md:text-4xl text-2xl font-bold text-center mb-8 text-gray-800">Personnalisez vos chaussettes en quelques clics</h1>
 
         {#if step === 1}
             <form on:submit|preventDefault={handleSubmit} class="space-y-6">
@@ -571,7 +571,7 @@
                 </div>
 
                 <div>
-                    <label for="size" class="block text-2xl font-medium text-gray-700 mb-1">3 Possibilités de personnalisation</label>
+                    <label for="size" class="block text-2xl font-medium text-gray-700 mb-1">3 possibilités de personnalisation</label>
                     <div class="flex gap-4 flex-col space-y-4">
                         <div
                                 on:click={() => {techProd = "Broderie", min_paire = 50}}
@@ -626,7 +626,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Taille et quantité</label>
                     {#if (formData.quantity3641 > 0 || formData.quantity3945 > 0) &&  formData.quantity3641 + formData.quantity3945 < min_paire}
                         <p class="text-red-600">
-                            ⚠️ Il faut un minimum de 50 paires pour commander
+                            ⚠️ Il faut un minimum de {min_paire} paires pour commander
                         </p>
                     {/if}
                     <div class="flex gap-4 flex-col sm:flex-row">
@@ -648,7 +648,7 @@
                 </div>
 
                 <div>
-                    <label for="productionReason" class="block text-sm font-medium text-gray-700 mb-1">Parlez nous de votre projet</label>
+                    <label for="productionReason" class="block text-sm font-medium text-gray-700 mb-1">Parlez nous de votre projet, vos envies, vos besoins</label>
                     <div class="relative">
                         <FileText class="absolute left-3 top-3 text-gray-400" size={20} />
                         <textarea bind:value={formData.productionReason} id="productionReason" placeholder="Événement important, cadeaux d'invités ou d'annonciation pour un mariage, cadeaux d'affaires, cadeaux clients, support original de communication... Donnez nous le maximum d'information pour comprendre au mieux votre besoin." required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3"></textarea>
