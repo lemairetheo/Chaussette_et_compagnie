@@ -46,7 +46,7 @@
     ];
 
     let selectedColor = allSockColors[0];
-    let step = 4;
+    let step = 1;
     let formData = {
         dueDate: '',
         size: '',
@@ -968,7 +968,6 @@
                                 class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                             Demander un devis
                         </button>
-
 
                         <p>
                             Une urgence ou une demande d'accompagnement supplémentaire, contactez nous directement via : <a href="mailto:personnalisation@chaussettesetcompagnie.fr">personnalisation@chaussettesetcompagnie.fr</a>
