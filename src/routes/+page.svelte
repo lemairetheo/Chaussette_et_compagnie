@@ -4,6 +4,7 @@
 
     import { initializeApp } from "firebase/app";
     import Cropper from 'svelte-easy-crop';
+    import ColorPicker from "svelte-awesome-color-picker";
 
 
     const firebaseConfig = {
@@ -634,14 +635,14 @@
                             <label for="size-36-41" class="block text-sm font-medium text-gray-700 mb-1">36-41</label>
                             <div class="relative">
                                 <Ruler class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                                <input bind:value={formData.quantity3641} type="number" id="size-36-41" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité (min {min_paire})" />
+                                <input bind:value={formData.quantity3641} type="number" id="size-36-41" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité" />
                             </div>
                         </div>
                         <div class="flex-1">
                             <label for="size-39-45" class="block text-sm font-medium text-gray-700 mb-1">39-45</label>
                             <div class="relative">
                                 <Ruler class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                                <input bind:value={formData.quantity3945} type="number" id="size-39-45" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité (min {min_paire})" />
+                                <input bind:value={formData.quantity3945} type="number" id="size-39-45" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité" />
                             </div>
                         </div>
                     </div>
@@ -803,12 +804,12 @@
 
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                                            Texte Ligne 2 (max 7 caractères)
+                                            Texte Ligne 2 (max 8 caractères)
                                         </label>
                                         <input
                                                 type="text"
                                                 bind:value={customText2}
-                                                maxlength="7"
+                                                maxlength="8"
                                                 class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                                 placeholder="Votre texte ici"
                                         />
@@ -835,7 +836,13 @@
                                         </select>
                                     </div>
 
-                                    <!-- Text Color -->
+
+                                    <ColorPicker
+                                            bind:hex={textColor}
+                                            position="responsive"
+                                            label="Choisir une couleur"
+                                    />
+                                    <!--
                                     <div class="space-y-4">
                                         <label class="block text-sm font-medium text-gray-700 mb-1">
                                             Couleur du texte
@@ -857,7 +864,7 @@
                                             {/each}
                                         </div>
                                     </div>
-
+                                    Text Color -->
 
                                 </div>
                             </div>
