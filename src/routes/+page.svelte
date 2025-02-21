@@ -721,7 +721,8 @@
                                 transform: translate(-50%, -50%) rotate({textRotation}deg);
                                 color: {textColor};
                                 font-family: {selectedFont};
-                                font-size: {isFullScreen ? getDefaultSize(selectedFont) + 20 : getDefaultSize(selectedFont)}px;
+                                font-size: {isFullScreen ? window.innerWidth <= 768 ? getDefaultSize(selectedFont) - 5 : getDefaultSize(selectedFont) + 20 : window.innerWidth <= 768 ? getDefaultSize(selectedFont) - 5 : getDefaultSize(selectedFont)}px;
+                                TODO
                             "
                         >{customText}</span>
                             {#if customText2}
@@ -733,7 +734,7 @@
                                     transform: translate(-50%, -50%) rotate({textRotation}deg);
                                     color: {textColor};
                                     font-family: {selectedFont};
-                                    font-size: {isFullScreen ? getDefaultSize(selectedFont) + 20 : getDefaultSize(selectedFont)}px;
+                                    font-size: {isFullScreen ? window.innerWidth <= 768 ? getDefaultSize(selectedFont) - 5 : getDefaultSize(selectedFont) + 20 : window.innerWidth <= 768 ? getDefaultSize(selectedFont) - 5 : getDefaultSize(selectedFont)}px;
                                 "
                                 >{customText2}</span>
                             {/if}
