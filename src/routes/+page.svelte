@@ -558,12 +558,12 @@
         </div>
 
 
-        <h1 class="md:text-4xl text-2xl font-bold text-center mb-8 text-gray-800">Personnalisez vos chaussettes en quelques clics</h1>
+        <h1 class="md:text-4xl text-2xl font-bold text-center mb-8 text-gray-800">Personnalisez facilement vos chaussettes graçe à notre simulateur en ligne</h1>
 
         {#if step === 1}
-            <form on:submit|preventDefault={handleSubmit} class="space-y-6">
+            <form on:submit|preventDefault={handleSubmit} class="space-y-6 md:pt-4">
                 <div>
-                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">Date de livraison souhaitée (⚠️ Il faut environ un mois après validation du projet)</label>
+                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">⚠️ Date de livraison souhaitée (Il faut environ un mois après validation du projet)</label>
                     <div class="relative">
                         <Calendar class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                         <input bind:value={formData.dueDate} type="date" id="dueDate" required min={minDateString} class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
