@@ -715,7 +715,7 @@
                     {#if customText || customText2}
                         <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                         <span
-                                class="absolute lowercase whitespace-nowrap"
+                                class="absolute whitespace-nowrap"
                                 style="
                                 left: {textPosition.x - (customText2 ? 1 : 0)}%;
                                 top: {textPosition.y - (customText2 ? 1 : 0)}%;
@@ -728,7 +728,7 @@
                         >{customText}</span>
                             {#if customText2}
                                 <span
-                                        class="absolute lowercase whitespace-nowrap"
+                                        class="absolute whitespace-nowrap"
                                         style="
                                     left: {textPosition.x}%;
                                     top: {textPosition.y + (customText ? 4 : 0)}%;
