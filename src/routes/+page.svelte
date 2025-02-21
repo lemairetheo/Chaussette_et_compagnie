@@ -192,7 +192,7 @@
             '/exemple/sticking2.jpg'
         ],
         embroidery: [
-            '/exemple/broderie4.webp',
+            '/exemple/broderie1.jpg',
             '/exemple/broderie2.jpg',
             '/exemple/broderie3.jpeg'
         ],
@@ -626,7 +626,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Taille et quantité</label>
                     {#if (formData.quantity3641 > 0 || formData.quantity3945 > 0) &&  formData.quantity3641 + formData.quantity3945 < min_paire}
                         <p class="text-red-600">
-                            ⚠️ Il faut un minimum de 50 paire pour commander
+                            ⚠️ Il faut un minimum de 50 paires pour commander
                         </p>
                     {/if}
                     <div class="flex gap-4 flex-col sm:flex-row">
