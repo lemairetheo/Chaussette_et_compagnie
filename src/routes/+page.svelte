@@ -971,7 +971,7 @@
 
 
                         <p>
-                            Une urgence ou une demande d'accompagnement, contactez directement via l'adresse mail : <a href="mailto:personnalisation.chaussettesetcompagnie.fr">personnalisation.chaussettesetcompagnie.fr</a>
+                            Une urgence ou une demande d'accompagnement supplémentaire, contactez nous directement via : <a href="mailto:personnalisation@chaussettesetcompagnie.fr">personnalisation@chaussettesetcompagnie.fr</a>
                         </p>
                     </div>
                 </div>
