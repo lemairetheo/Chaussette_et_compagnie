@@ -46,7 +46,7 @@
     ];
 
     let selectedColor = allSockColors[0];
-    let step = 1;
+    let step = 4;
     let formData = {
         dueDate: '',
         size: '',
@@ -214,8 +214,39 @@
         selectedColor = color;
     }
 
+    function resetPersonalization() {
+        // Reset text-related variables
+        customText = '';
+        customText2 = '';
+        selectedFont = 'Pacifico';
+        textColor = '#000000';
+        textSize = 20;
+        textRotation = -10;
+        textPosition = { x: 30, y: 37 };
+
+        // Reset image-related variables
+        uploadedImage = null;
+        croppedImage = null;
+        imageFile = null;
+        imagePosition = { x: 30, y: 43 };
+        imageSize = 15;
+        imageOpacity = 1;
+        image = null;
+        imageBlendMode = 'normal';
+        isRoundImage = false;
+        backgroundColor = '';
+    }
+
+
     function goBack() {
-        if (step > 1) step--;
+        if (step > 1) {
+            step--;
+
+            // If going back from step 3 to step 2, reset personalization
+            if (step === 2) {
+                resetPersonalization();
+            }
+        }
     }
 
     let uploadedImage = null;
@@ -527,7 +558,7 @@
         </div>
 
 
-        <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Personnalisez vos chaussettes</h1>
+        <h1 class="md:text-4xl text-2xl font-bold text-center mb-8 text-gray-800">Personnalisez vos chaussettes</h1>
 
         {#if step === 1}
             <form on:submit|preventDefault={handleSubmit} class="space-y-6">
@@ -545,7 +576,7 @@
                         <div
                                 on:click={() => {techProd = "Broderie", min_paire = 50}}
                                 class:clicked={techProd === "Broderie"}
-                                class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
+                                class="cursor-pointer rounded-2xl md:hover:scale-105 transition-all">
                             <div class:clicked={techProd === "Broderie"} class="bg-white p-4  rounded-2xl shadow-lg">
                                 <h3 class="text-xl font-semibold mb-2">1. Broderie</h3>
                                 <p class:clicked={techProd === "Broderie"} class="text-gray-600 mb-4">Idéal pour vos logos, blasons, emblèmes... Brodeuse de haute précision.</p>
@@ -560,7 +591,7 @@
                                 <div
                                         on:click={() => {techProd = "Lettrage", min_paire = 50}}
                                         class:clicked={techProd === "Lettrage"}
-                                        class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
+                                        class="cursor-pointer rounded-2xl md:hover:scale-105 transition-all">
                                     <div class:clicked={techProd === "Lettrage"} class="bg-white p-4  rounded-2xl shadow-lg">
                                         <h3 class="text-xl font-semibold mb-2">2. Lettrage</h3>
                                         <p class:clicked={techProd === "Lettrage"} class="text-gray-600 mb-4">Un mot, une date, une punchline... Parce que la concision a toujours raison.</p>
@@ -576,7 +607,7 @@
                                 <div
                                         on:click={() => {techProd = "Sticking", min_paire = 20}}
                                         class:clicked={techProd === "Sticking"}
-                                        class="cursor-pointer rounded-2xl hover:scale-105 transition-all">
+                                        class="cursor-pointer rounded-2xl md:hover:scale-105 transition-all">
                                     <div class:clicked={techProd === "Sticking"} class="bg-white p-4 rounded-2xl shadow-lg">
                                         <h3 class="text-xl font-semibold mb-2">3. Sticking / Flocage</h3>
                                         <p class:clicked={techProd === "Sticking"} class="text-gray-600 mb-4">Idéal pour vos photos, visuels, et images en tout genre.</p>
@@ -884,7 +915,7 @@
         {/if}
         {#if step === 4}
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-8">
-                <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Personnalisation de la cartoline</h1>
+                <h1 class="md:text-4xl text-xl font-bold text-center mb-8 text-gray-800">Personnalisation de la cartoline</h1>
 
                 <div class="flex flex-col md:flex-row gap-8">
                     <div class="flex-1">
