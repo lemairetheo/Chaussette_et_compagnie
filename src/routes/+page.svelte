@@ -46,7 +46,7 @@
     ];
 
     let selectedColor = allSockColors[0];
-    let step = 1;
+    let step = 4;
     let formData = {
         dueDate: '',
         size: '',
@@ -558,7 +558,7 @@
         </div>
 
 
-        <h1 class="md:text-4xl text-2xl font-bold text-center mb-8 text-gray-800">Personnalisez facilement vos chaussettes graçe à notre simulateur en ligne</h1>
+        <h1 class="md:text-4xl text-2xl font-bold text-center mb-8 text-gray-800">Personnalisez facilement vos chaussettes grâce à notre simulateur en ligne</h1>
 
         {#if step === 1}
             <form on:submit|preventDefault={handleSubmit} class="space-y-6 md:pt-4">
@@ -926,13 +926,13 @@
                 <div class="flex flex-col md:flex-row gap-8">
                     <div class="flex-1">
                         <img src="/cartoline.png" alt="Exemple de cartoline" class="w-full h-auto object-contain rounded-t-lg shadow-lg" />
-                        <img src="/cartoline2.webp" alt="Exemple de cartoline" class="w-full h-auto object-contain rounded-b-lg" />
+                        <img src="/cartoline2.webp" alt="Exemple de cartoline" class="w-full rotate-180 h-auto object-contain rounded-b-lg" />
                     </div>
 
                     <div class="flex-1 space-y-6">
                         <div class="bg-blue-50 p-6 rounded-lg">
                             <h2 class="text-2xl font-semibold mb-4 text-gray-800">La cartoline, qu'est-ce que c'est ?</h2>
-                            <p class="text-gray-700">La cartoline est un support cartonné qui accompagne vos chaussettes. Elle peut être entièrement personnalisée pour créer une présentation unique et mémorable de votre produit.</p>
+                            <p class="text-gray-700">La cartoline est un petit support cartonné qui accompagne vos chaussettes. Elle peut être entièrement personnalisée pour créer une présentation unique et un rendu professionnel.</p>
                         </div>
 
                         <div class="space-y-4">
@@ -952,17 +952,13 @@
                                     Non merci
                                 </button>
                             </div>
+                            {#if wantCartoline}
+                                <p>
+                                    La personalisation de la cartoline entraine un surcout de 0,20€ par paire.
+                                </p>
+                            {/if}
                         </div>
 
-                        <div class="bg-gray-50 p-6 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-2 text-gray-800">Comment ça marche ?</h3>
-                            <ul class="space-y-2 text-gray-700">
-                                <li>✓ Notre équipe vous recontactera pour discuter de vos besoins</li>
-                                <li>✓ Nous vous proposerons plusieurs designs personnalisés</li>
-                                <li>✓ Vous pourrez choisir les finitions (papier, découpe, etc.)</li>
-                                <li>✓ Un devis spécifique vous sera fourni</li>
-                            </ul>
-                        </div>
 
                         <button
                                 on:click={() => {
@@ -970,8 +966,13 @@
                             window.location.href = '/';
                         }}
                                 class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                            Terminer la commande
+                            Demander un devis
                         </button>
+
+
+                        <p>
+                            Une urgence ou une demande d'accompagnement, contactez directement via l'adresse mail : <a href="mailto:personnalisation.chaussettesetcompagnie.fr">personnalisation.chaussettesetcompagnie.fr</a>
+                        </p>
                     </div>
                 </div>
             </div>
