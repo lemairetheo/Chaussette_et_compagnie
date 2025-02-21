@@ -46,7 +46,7 @@
     ];
 
     let selectedColor = allSockColors[0];
-    let step = 4;
+    let step = 1;
     let formData = {
         dueDate: '',
         size: '',
@@ -379,7 +379,7 @@
 
     // Modifier la fonction handleSubmit pour appeler saveFirstStep
     function handleSubmit() {
-        if (formData.quantity3641 < min_paire && formData.quantity3945 < min_paire) {
+        if (formData.quantity3641 + formData.quantity3945 < min_paire) {
             alert(`La quantité minimum est de ${min_paire} paires.`);
             return;
         }
@@ -571,7 +571,7 @@
                 </div>
 
                 <div>
-                    <label for="size" class="block text-2xl font-medium text-gray-700 mb-1">3 Possibilité de personnalisation</label>
+                    <label for="size" class="block text-2xl font-medium text-gray-700 mb-1">3 Possibilités de personnalisation</label>
                     <div class="flex gap-4 flex-col space-y-4">
                         <div
                                 on:click={() => {techProd = "Broderie", min_paire = 50}}
@@ -624,19 +624,24 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Taille et quantité</label>
+                    {#if (formData.quantity3641 > 0 || formData.quantity3945 > 0) &&  formData.quantity3641 + formData.quantity3945 < min_paire}
+                        <p class="text-red-600">
+                            ⚠️ Il faut un minimum de 50 paire pour commander
+                        </p>
+                    {/if}
                     <div class="flex gap-4 flex-col sm:flex-row">
                         <div class="flex-1">
                             <label for="size-36-41" class="block text-sm font-medium text-gray-700 mb-1">36-41</label>
                             <div class="relative">
                                 <Ruler class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                                <input bind:value={formData.quantity3641} type="number" id="size-36-41" min={min_paire} class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité (min {min_paire})" />
+                                <input bind:value={formData.quantity3641} type="number" id="size-36-41" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité (min {min_paire})" />
                             </div>
                         </div>
                         <div class="flex-1">
                             <label for="size-39-45" class="block text-sm font-medium text-gray-700 mb-1">39-45</label>
                             <div class="relative">
                                 <Ruler class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                                <input bind:value={formData.quantity3945} type="number" id="size-39-45"  min={min_paire} class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité (min {min_paire})" />
+                                <input bind:value={formData.quantity3945} type="number" id="size-39-45" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Quantité (min {min_paire})" />
                             </div>
                         </div>
                     </div>
