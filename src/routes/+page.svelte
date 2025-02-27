@@ -279,7 +279,7 @@
     let imageBlendMode = 'normal';
     let isRoundImage = false;
     let backgroundColor = '';
-    let wantCartoline = false;
+    let wantCartoline = true;
     let files = [];
     let cartolineDetails = '';
     let techProd = null
@@ -666,7 +666,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Taille et quantité</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Taille et quantité <span class="text-red-600 text-ellipsis">*</span></label>
                     {#if (formData.quantity3641 > 0 || formData.quantity3945 > 0) &&  formData.quantity3641 + formData.quantity3945 < min_paire}
                         <p class="text-red-600">
                             ⚠️ Il faut un minimum de {min_paire} paires pour commander
@@ -691,7 +691,7 @@
                 </div>
 
                 <div>
-                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">⚠️ Date de livraison souhaitée (Il faut environ un mois après validation du projet)</label>
+                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">⚠️ Date de livraison souhaitée (Il faut environ un mois après validation du projet) <span class="text-red-600 text-ellipsis">*</span></label>
                     <div class="relative">
                         <Calendar class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                         <input bind:value={formData.dueDate} type="date" id="dueDate" required min={minDateString} class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
@@ -699,7 +699,7 @@
                 </div>
 
                 <div>
-                    <label for="productionReason" class="block text-sm font-medium text-gray-700 mb-1">Parlez nous de votre projet, vos envies, vos besoins</label>
+                    <label for="productionReason" class="block text-sm font-medium text-gray-700 mb-1">decrivez votre projet, vos envies, vos besoins <span class="text-red-600 text-ellipsis">*</span></label>
                     <div class="relative">
                         <FileText class="absolute left-3 top-3 text-gray-400" size={20} />
                         <textarea bind:value={formData.productionReason} id="productionReason" placeholder="Événement important, cadeaux d'invités ou d'annonciation pour un mariage, cadeaux d'affaires, cadeaux clients, support original de communication... Donnez nous le maximum d'information pour comprendre au mieux votre besoin." required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3"></textarea>
@@ -707,15 +707,7 @@
                 </div>
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <div class="relative">
-                        <Mail class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                        <input bind:value={formData.email} type="email" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                    </div>
-                </div>
-
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Nom <span class="text-red-600 text-ellipsis">*</span></label>
                     <div class="relative">
                         <User class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                         <input bind:value={formData.nom} type="text" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
@@ -723,7 +715,7 @@
                 </div>
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Prénom <span class="text-red-600 text-ellipsis">*</span></label>
                     <div class="relative">
                         <User class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                         <input bind:value={formData.prenom} type="text" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
@@ -739,7 +731,15 @@
                 </div>
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Numéro de téléphone</label>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-600 text-ellipsis">*</span></label>
+                    <div class="relative">
+                        <Mail class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <input bind:value={formData.email} type="email" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Numéro de téléphone <span class="text-red-600 text-ellipsis">*</span></label>
                     <div class="relative">
                         <Phone class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                         <input bind:value={formData.telephone} type="tel" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
@@ -977,7 +977,7 @@
                                         <div class="flex gap-2 mt-4">
                                             <button
                                                     on:click={cropImage}
-                                                    class="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
+                                                    class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
                                                     disabled={isLoading}
                                             >
                                                 <Scissors class="mr-2" />
@@ -1099,8 +1099,8 @@
                         <button
                                 on:click={async ()  => {
                             await finalizeOrder();
-                            //alert('Merci pour votre commande ! ' + (wantCartoline ? 'Nous vous recontacterons bientôt pour la personnalisation de votre cartoline.' : ''));
-                            //window.location.href = '/';
+                            alert('Merci pour votre commande ! ' + (wantCartoline ? 'Nous vous recontacterons bientôt pour la personnalisation de votre cartoline.' : ''));
+                            window.location.href = '/';
                         }}
                                 class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                             Demander un devis
