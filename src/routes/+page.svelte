@@ -1,5 +1,20 @@
 <script>
-    import { Palette, Calendar, Ruler, FileText, Package, Mail, Upload, Scissors, Circle, Maximize2, Minimize2, ArrowLeft, Type } from 'lucide-svelte'
+    import {
+        Palette,
+        Calendar,
+        Ruler,
+        FileText,
+        Package,
+        Mail,
+        Upload,
+        Scissors,
+        Circle,
+        Maximize2,
+        Minimize2,
+        ArrowLeft,
+        Type,
+        PersonStanding, User, Factory, Phone
+    } from 'lucide-svelte'
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
     import { initializeApp } from "firebase/app";
@@ -54,7 +69,11 @@
         productionReason: '',
         quantity3641: null,
         quantity3945: null,
-        email: ''
+        email: '',
+        nom: '',
+        prenom: '',
+        societe: '',
+        telephone: '',
     };
 
     let customText = '';
@@ -347,6 +366,10 @@
             quantity3945: formData.quantity3945,
             email: formData.email,
             techProd: techProd,
+            nom: formData.nom,
+            prenom: formData.prenom,
+            societe: formData.societe,
+            telephone: formData.telephone,
         };
 
         try {
@@ -563,13 +586,7 @@
 
         {#if step === 1}
             <form on:submit|preventDefault={handleSubmit} class="space-y-6 md:pt-4">
-                <div>
-                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">⚠️ Date de livraison souhaitée (Il faut environ un mois après validation du projet)</label>
-                    <div class="relative">
-                        <Calendar class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                        <input bind:value={formData.dueDate} type="date" id="dueDate" required min={minDateString} class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                    </div>
-                </div>
+
 
                 <div>
                     <label for="size" class="block text-2xl font-medium text-gray-700 mb-1">3 possibilités de personnalisation</label>
@@ -649,6 +666,14 @@
                 </div>
 
                 <div>
+                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">⚠️ Date de livraison souhaitée (Il faut environ un mois après validation du projet)</label>
+                    <div class="relative">
+                        <Calendar class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <input bind:value={formData.dueDate} type="date" id="dueDate" required min={minDateString} class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                </div>
+
+                <div>
                     <label for="productionReason" class="block text-sm font-medium text-gray-700 mb-1">Parlez nous de votre projet, vos envies, vos besoins</label>
                     <div class="relative">
                         <FileText class="absolute left-3 top-3 text-gray-400" size={20} />
@@ -661,6 +686,38 @@
                     <div class="relative">
                         <Mail class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                         <input bind:value={formData.email} type="email" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
+                    <div class="relative">
+                        <User class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <input bind:value={formData.nom} type="email" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
+                    <div class="relative">
+                        <User class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <input bind:value={formData.prenom} type="email" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Société (facultatif)</label>
+                    <div class="relative">
+                        <Factory class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <input bind:value={formData.societe} type="email" id="email" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Numéro de téléphone</label>
+                    <div class="relative">
+                        <Phone class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <input bind:value={formData.telephone} type="email" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                 </div>
 
