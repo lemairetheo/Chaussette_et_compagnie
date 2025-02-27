@@ -693,7 +693,7 @@
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
                     <div class="relative">
                         <User class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                        <input bind:value={formData.nom} type="email" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        <input bind:value={formData.nom} type="text" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                 </div>
 
@@ -701,7 +701,7 @@
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Prénom</label>
                     <div class="relative">
                         <User class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                        <input bind:value={formData.prenom} type="email" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        <input bind:value={formData.prenom} type="text" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                 </div>
 
@@ -709,7 +709,7 @@
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Société (facultatif)</label>
                     <div class="relative">
                         <Factory class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                        <input bind:value={formData.societe} type="email" id="email" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        <input bind:value={formData.societe} type="text" id="email" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                 </div>
 
@@ -717,7 +717,7 @@
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Numéro de téléphone</label>
                     <div class="relative">
                         <Phone class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                        <input bind:value={formData.telephone} type="email" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                        <input bind:value={formData.telephone} type="tel" id="email" required class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                     </div>
                 </div>
 
@@ -974,10 +974,10 @@
 
                         <!-- Finish Button -->
                         <button
-                                on:click={finalizeOrder}
+                                on:click={() => uploadedImage || customText || customText2 ? finalizeOrder() : alert("Vous devez d'abord personalisez votre chaussette")}
                                 class="mt-8 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
-                            Finaliser la commande
+                            Passer à l'étape suivante
                         </button>
                     </div>
                 {/if}
