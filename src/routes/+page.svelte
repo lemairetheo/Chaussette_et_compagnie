@@ -280,6 +280,8 @@
     let isRoundImage = false;
     let backgroundColor = '';
     let wantCartoline = false;
+    let files = [];
+    let cartolineDetails = '';
     let techProd = null
     let min_paire= 50
 
@@ -327,7 +329,8 @@
                 uploadedImage: shopifyImageUrl,
                 croppedImage: croppedImage,
                 techProd: techProd,
-                wantCartoline: wantCartoline
+                wantCartoline: wantCartoline,
+                cartolineDetails: cartolineDetails,
             };
 
             const response = await fetch('https://api-sock.vercel.app/orders', {
@@ -354,6 +357,28 @@
     function getDefaultSize(fontName) {
         const font = fonts.find(f => f.name === fontName);
         return font ? font.defaultSize : null; // Retourne la taille par défaut ou null si non trouvé
+    }
+
+    async function handleFileUploadCarto(event) {
+        const firstStepId = localStorage.getItem('firstStepId');
+
+        if (!firstStepId) {
+            alert('Erreur : Les informations de la première étape sont manquantes.');
+            return;
+        }
+
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const storagePath = `cartoline/${firstStepId}/${file.name}`;
+        const storageRef = ref(storage, storagePath);
+
+        try {
+            await uploadBytes(storageRef, file);
+            console.log("Fichier uploadé avec succès :", storagePath);
+        } catch (error) {
+            console.error("Erreur lors de l'upload :", error);
+        }
     }
 
 
@@ -974,7 +999,7 @@
 
                         <!-- Finish Button -->
                         <button
-                                on:click={() => uploadedImage || customText || customText2 ? finalizeOrder() : alert("Vous devez d'abord personalisez votre chaussette")}
+                                on:click={() => uploadedImage || customText || customText2 ? step++ : alert("Vous devez d'abord personalisez votre chaussette")}
                                 class="mt-8 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
                             Passer à l'étape suivante
@@ -1017,17 +1042,65 @@
                                 </button>
                             </div>
                             {#if wantCartoline}
-                                <p>
-                                    La personalisation de la cartoline entraine un surcout de 0,20€ par paire.
-                                </p>
+                                <div class="space-y-4 mt-4 bg-gray-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800">Que souhaitez-vous voir apparaître sur votre cartoline ?</h4>
+                                    <p class="text-gray-600 text-sm">Élément de langage, punchline, logo, photo... Donnez nous le maximum d'informations afin que nous puissions vous envoyer par la suite une simulation précise par rapport à vos attentes.</p>
+
+                                    <textarea
+                                            bind:value={cartolineDetails}
+                                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            rows="4"
+                                            placeholder="Décrivez votre projet de personnalisation ici..."></textarea>
+
+                                    <div class="bg-blue-100 p-4 rounded-lg">
+                                        <h4 class="font-semibold text-gray-800 mb-2">Envoyez des fichiers</h4>
+                                        <p class="text-gray-600 text-sm mb-3">Si vous êtes une entreprise ou que vous maîtrisez la création et les outils de PAO, vous pouvez nous envoyer directement le fichier tel que vous le souhaitez. Vous avez les dimensions sur l'image en haut à gauche.</p>
+
+                                        <label for="file-upload" class="cursor-pointer bg-white text-blue-600 py-2 px-4 border border-blue-500 rounded-lg hover:bg-blue-50 transition-colors inline-block">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                            </svg>
+                                            Choisir des fichiers
+                                        </label>
+                                        <input
+                                                id="file-upload"
+                                                type="file"
+                                                multiple
+                                                on:change={handleFileUploadCarto}
+                                                class="hidden"
+                                                accept=".jpg,.jpeg,.png,.pdf,.ai,.psd" />
+
+                                        {#if files && files.length > 0}
+                                            <div class="mt-3">
+                                                <p class="text-sm font-medium text-gray-700">Fichiers sélectionnés:</p>
+                                                <ul class="text-sm text-gray-600 mt-1">
+                                                    {#each files as file}
+                                                        <li class="flex items-center">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                            {file.name}
+                                                        </li>
+                                                    {/each}
+                                                </ul>
+                                            </div>
+                                        {/if}
+                                    </div>
+
+                                    <p class="text-amber-700 text-sm mt-2">
+                                        La personnalisation de la cartoline entraîne un surcoût de 0,20€ par paire.
+                                    </p>
+                                </div>
                             {/if}
                         </div>
 
 
+
                         <button
-                                on:click={() => {
-                            alert('Merci pour votre commande ! ' + (wantCartoline ? 'Nous vous recontacterons bientôt pour la personnalisation de votre cartoline.' : ''));
-                            window.location.href = '/';
+                                on:click={async ()  => {
+                            await finalizeOrder();
+                            //alert('Merci pour votre commande ! ' + (wantCartoline ? 'Nous vous recontacterons bientôt pour la personnalisation de votre cartoline.' : ''));
+                            //window.location.href = '/';
                         }}
                                 class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                             Demander un devis
