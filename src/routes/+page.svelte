@@ -977,7 +977,7 @@
                                         <div class="flex gap-2 mt-4">
                                             <button
                                                     on:click={cropImage}
-                                                    class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex items-center justify-center"
+                                                    class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center"
                                                     disabled={isLoading}
                                             >
                                                 <Scissors class="mr-2" />
@@ -1107,7 +1107,7 @@
                         </button>
 
                         <p>
-                            Une urgence ou une demande d'accompagnement supplémentaire, contactez nous directement via : <a href="mailto:personnalisation@chaussettesetcompagnie.fr">personnalisation@chaussettesetcompagnie.fr</a>
+                            Une urgence ou une demande d'accompagnement supplémentaire, contactez nous directement en clickant <a class="underline" href="mailto:personnalisation@chaussettesetcompagnie.fr">ici</a>
                         </p>
                     </div>
                 </div>
