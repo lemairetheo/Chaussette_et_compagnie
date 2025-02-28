@@ -15,6 +15,7 @@
         Type,
         PersonStanding, User, Factory, Phone
     } from 'lucide-svelte'
+    import html2canvas from "html2canvas";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
     import { initializeApp } from "firebase/app";
@@ -86,7 +87,7 @@
     let isCropModalOpen = false;
     let crop = { x: 0, y: 0 };
     let zoom = 1;
-    let croppedAreaPixels = null;
+    let previewElement;
 
 
     async function createImage(url) {
@@ -282,6 +283,7 @@
     let wantCartoline = true;
     let files = [];
     let cartolineDetails = '';
+    let previsuUrl = null
     let techProd = null
     let min_paire= 50
 
@@ -331,6 +333,8 @@
                 techProd: techProd,
                 wantCartoline: wantCartoline,
                 cartolineDetails: cartolineDetails,
+                cartolineImageUrls: cartolineImageUrls,
+                previsuUrl: previsuUrl,
             };
 
             const response = await fetch('https://api-sock.vercel.app/orders', {
@@ -359,6 +363,58 @@
         return font ? font.defaultSize : null; // Retourne la taille par défaut ou null si non trouvé
     }
 
+    let cartolineImageUrls = [];
+
+    async function capturePreview() {
+        if (previewElement) {
+            const canvas = await html2canvas(previewElement);
+            const imageUrl = canvas.toDataURL("image/png"); // Convertit l’image en format PNG
+            const imageBlob = dataURLtoBlob(imageUrl); // Convertir en Blob
+
+            // Envoie l'image au serveur pour stockage
+            uploadprevisu(imageBlob);
+        }
+    }
+
+    // Fonction pour convertir une data URL en Blob
+    function dataURLtoBlob(dataURL) {
+        const byteString = atob(dataURL.split(',')[1]);
+        const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+
+        for (let i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+        }
+
+        return new Blob([uint8Array], { type: mimeString });
+    }
+
+    async function uploadprevisu(imageBlob) {
+        const firstStepId = localStorage.getItem('firstStepId');
+
+        if (!firstStepId) {
+            alert('Erreur : Les informations de la première étape sont manquantes.');
+            return;
+        }
+
+        const storagePath = `previsu/${firstStepId}/previsu.png`; // Assure-toi d'ajouter l'extension
+        const storageRef = ref(storage, storagePath);
+
+        try {
+            await uploadBytes(storageRef, imageBlob);  // Upload du fichier (converti en Blob)
+            console.log("Fichier uploadé avec succès :", storagePath);
+
+            // Obtenir l'URL de téléchargement du fichier
+            previsuUrl = await getDownloadURL(storageRef);
+            console.log("URL du fichier téléchargé :", previsuUrl);
+
+        } catch (error) {
+            console.error("Erreur lors de l'upload :", error);
+        }
+    }
+
+
     async function handleFileUploadCarto(event) {
         const firstStepId = localStorage.getItem('firstStepId');
 
@@ -367,17 +423,32 @@
             return;
         }
 
-        const file = event.target.files[0];
-        if (!file) return;
+        const selectedFiles = event.target.files;
+        if (!selectedFiles || selectedFiles.length === 0) return;
 
-        const storagePath = `cartoline/${firstStepId}/${file.name}`;
-        const storageRef = ref(storage, storagePath);
+        // Parcours chaque fichier sélectionné et upload
+        for (let i = 0; i < selectedFiles.length; i++) {
+            const file = selectedFiles[i];
+            const storagePath = `cartoline/${firstStepId}/${file.name}`;
+            const storageRef = ref(storage, storagePath);
 
-        try {
-            await uploadBytes(storageRef, file);
-            console.log("Fichier uploadé avec succès :", storagePath);
-        } catch (error) {
-            console.error("Erreur lors de l'upload :", error);
+            try {
+                await uploadBytes(storageRef, file);  // Upload du fichier
+                console.log("Fichier uploadé avec succès :", storagePath);
+
+                // Obtenir l'URL de téléchargement du fichier
+                const downloadURL = await getDownloadURL(storageRef);
+                console.log("URL du fichier téléchargé :", downloadURL);
+
+                // Ajouter l'URL au tableau
+                cartolineImageUrls.push(downloadURL);
+
+                // Optionnel : Ajouter le fichier au tableau des fichiers sélectionnés pour affichage
+                files.push(file);
+
+            } catch (error) {
+                console.error("Erreur lors de l'upload :", error);
+            }
         }
     }
 
@@ -607,7 +678,7 @@
         </div>
 
 
-        <h1 class="md:text-4xl text-2xl font-bold text-center mb-8 text-gray-800">Personnalisez facilement vos chaussettes grâce à notre simulateur en ligne</h1>
+        <h1 class="md:text-4xl text-2xl font-bold text-center mb-8 text-gray-800">Personnalisez facilement vos chaussettes grâce à notre outil en ligne</h1>
 
         {#if step === 1}
             <form on:submit|preventDefault={handleSubmit} class="space-y-6 md:pt-4">
@@ -789,7 +860,7 @@
         {#if step === 3}
             <div class="flex flex-col md:flex-row gap-8">
                 <!-- Preview Section -->
-                <div class="flex-1 h-fit relative">
+                <div bind:this={previewElement} class="flex-1 h-fit relative">
                     <!-- Base Sock Image -->
                     <img src={selectedColor.path} alt="Chaussette" class="w-full h-auto object-contain rounded-lg shadow-lg" />
 
@@ -999,7 +1070,7 @@
 
                         <!-- Finish Button -->
                         <button
-                                on:click={() => uploadedImage || customText || customText2 ? step++ : alert("Vous devez d'abord personalisez votre chaussette")}
+                                on:click={() => uploadedImage || customText || customText2 ? step++ && capturePreview() : alert("Vous devez d'abord personalisez votre chaussette")}
                                 class="mt-8 w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
                             Passer à l'étape suivante
@@ -1100,7 +1171,7 @@
                                 on:click={async ()  => {
                             await finalizeOrder();
                             alert('Merci pour votre commande ! ' + (wantCartoline ? 'Nous vous recontacterons bientôt pour la personnalisation de votre cartoline.' : ''));
-                            window.location.href = '/';
+                            step++;
                         }}
                                 class="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                             Demander un devis
@@ -1111,6 +1182,18 @@
                         </p>
                     </div>
                 </div>
+            </div>
+
+        {/if}
+        {#if step >= 5}
+            <div class=" justify-center items-center flex flex-col">
+                <h1 class="text-xl text-center mt-10">
+                    Nous vous remercions pour votre intérêt et demande de chaussettes personnalisées. Nous vous reconterons très rapidement par mail afin de vous fournir un devis précis par rapport à votre projet.
+                    <br><br>
+                    Il est également possible qu'une personne de l'équipe vous appelle directement en cas d'un besoin de précision.
+                </h1>
+                
+                <img class="w-64 mt-10" src="/logo.png">
             </div>
         {/if}
     </div>

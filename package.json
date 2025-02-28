@@ -27,6 +27,7 @@
 		"@tensorflow/tfjs": "^4.21.0",
 		"cropperjs": "^1.6.2",
 		"firebase": "^11.2.0",
+		"html2canvas": "^1.4.1",
 		"lucide-svelte": "^0.447.0",
 		"replicate": "^1.0.0",
 		"sharp": "^0.33.5",
