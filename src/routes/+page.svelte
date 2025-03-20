@@ -560,7 +560,7 @@
                 method: 'POST',
                 headers: {
                     'Accept': 'image/png, application/json',
-                    'x-api-key': 'sandbox_94d27f005dd8cfaddb64864961f6215f59ad1340',
+                    'x-api-key': '94d27f005dd8cfaddb64864961f6215f59ad1340',
                 },
                 body: formData
             });
